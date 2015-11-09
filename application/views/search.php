@@ -21,7 +21,7 @@
 
 
     <div class="row" id="content-container">
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-xs-12">
 
             <ul class="list-group clearfix" id="filterrow">
                 <li class="list-group-item-filter clearfix">
@@ -93,7 +93,7 @@
 
         </div>
 
-        <div class="col-lg-6 hidden-md hidden-sm hidden-xs" id="map_search_pane">
+        <div class="col-md-6 col-sm-12 hidden-xs" id="map_search_pane">
         </div>
     </div>
 </div>

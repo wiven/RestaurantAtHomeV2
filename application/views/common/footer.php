@@ -11,7 +11,7 @@
 			<a href="<?php echo base_url(); ?>contact">Contact</a> &mdash;
 			<a href="<?php echo base_url(); ?>privacy">Privacy Charter</a>
 		</p>
-		<p class="pull-right" id="lang-choice">
+		<p class="pull-right hidden-xs" id="lang-choice">
 			<a href="<?php echo 'http://nl.'.(isset($current_url) ? $current_url : ''); ?>" title="Nederlands">NL</a> &mdash;
 			<a href="<?php echo 'http://fr.'.(isset($current_url) ? $current_url : ''); ?>" title="Fran&ccedil;ais">FR</a> &mdash;
 			<a href="<?php echo 'http://en.'.(isset($current_url) ? $current_url : ''); ?>" title="English">EN</a>
@@ -74,8 +74,6 @@
 <script src="<?php echo public_url(); ?>js/jquery-backstretch-2.0.4.js"></script>
 <script src="<?php echo public_url(); ?>js/jquery-placeholder.js"></script>
 <script src="<?php echo public_url(); ?>js/jquery-password-check.js"></script>
-<script src="<?php echo public_url(); ?>js/parsley.js"></script>
-<script src="<?php echo public_url(); ?>js/parsley-nl.js"></script>
 <script src="<?php echo public_url(); ?>js/base64.js"></script>
 <script src="<?php echo public_url(); ?>js/cookie.js"></script>
 <script src="<?php echo public_url(); ?>js/jquery.cookiebar.js"></script>

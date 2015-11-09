@@ -17,7 +17,7 @@ class Search extends CI_Controller {
 			case "nl":
 				$data_header = array(
 					'page_title' => ' - Zoeken',
-					'additional_styles' => "<link rel='stylesheet' href='".public_url()."css/client_styles.css'>
+					'additional_styles' => "
 					<link rel='stylesheet' href='".public_url()."css/sweetalert.css'>"
 				);
 
@@ -35,7 +35,7 @@ class Search extends CI_Controller {
 			case "fr":
 				$data_header = array(
 					'page_title' => ' - Chercher',
-					'additional_styles' => "<link rel='stylesheet' href='".public_url()."css/client_styles.css'>"
+					'additional_styles' => ""
 				);
 
 				$data_footer = array(
@@ -52,7 +52,7 @@ class Search extends CI_Controller {
 			case "en":
 				$data_header = array(
 					'page_title' => ' - Search',
-					'additional_styles' => "<link rel='stylesheet' href='".public_url()."css/client_styles.css'>"
+					'additional_styles' => ""
 				);
 
 				$data_footer = array(
@@ -69,7 +69,7 @@ class Search extends CI_Controller {
 			default:
 				$data_header = array(
 					'page_title' => ' - Search',
-					'additional_styles' => "<link rel='stylesheet' href='".public_url()."css/client_styles.css'>"
+					'additional_styles' => ""
 				);
 
 				$data_footer = array(
@@ -89,7 +89,7 @@ class Search extends CI_Controller {
 	public function restaurantdetail() {
 		$data_header = array(
 			'page_title' => ' - Restaurant',
-			'additional_styles' => "<link rel='stylesheet' href='".public_url()."css/client_styles.css'>"
+			'additional_styles' => ""
 		);
 
 		$data_footer = array(
