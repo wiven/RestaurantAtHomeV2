@@ -13,7 +13,7 @@ class Restaurantdetail extends CI_Controller {
 	public function index() {
 		$data_header = array(
 			'page_title' => ' - Restaurant',
-			'additional_styles' => "<link rel='stylesheet' href='".public_url()."css/client_styles.css'>"
+			'additional_styles' => ""
 		);
 
 		$data_footer = array(
