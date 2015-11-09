@@ -328,6 +328,7 @@ class Dashboard extends CI_Controller {
      * executed when '/logout' is loaded
      */
     public function logout() {
+        @session_start();
         @session_destroy();
 
         $data_footer = array(

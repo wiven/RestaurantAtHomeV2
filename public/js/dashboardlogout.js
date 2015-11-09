@@ -3,5 +3,5 @@ $( document ).ready(function() {
     Cookies.remove('restoId');
     Cookies.remove('username');
 
-    window.location.href = 'http://google.be';
+    window.location.href = './';
 });

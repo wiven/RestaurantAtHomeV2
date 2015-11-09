@@ -1,4 +1,5 @@
 var resto_id = 5;
+var resto_id = Base64.decode(Cookies.get('restoId'));
 var map = '', restoName = '', specialtyId = 0, kitchenTypeIdDb = 0, addressIdDb = 0;
 var latDb = '', lngDb = '';
 var addressArray = Array();
@@ -711,6 +712,7 @@ function getInitialRestoInfo(restoId) {
         "url": API_URL + "dashboard/profile/" + restoId,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
             "content-type": "application/json",
             "Pragma": "no-cache" ,
             "Cache-Control": "no-cache",

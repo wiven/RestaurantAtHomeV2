@@ -1,13 +1,37 @@
 $(document).ready(function () {
-    $.ajax({
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        url: API_URL + 'dashboard/overview/' + resto_id,
+        "method": "GET",
+        "headers": {
+            "hash": Base64.decode(Cookies.get("hash")),
+            "content-type": "application/json",
+            "Pragma": "no-cache" ,
+            "Cache-Control": "no-cache",
+            "Expires": 0
+        },
+        "cache": false,
+        "processData": false
+    }
+    /*$.ajax({
         method: "GET",
-        url: API_URL + '/dashboard/overview/' + resto_id,
+        url: API_URL + 'dashboard/overview/' + resto_id,
         dataType: "jsonp",
         crossDomain: true,
         xhrFields: {
             withCredentials: true
-        }
-    }).always(function (msg) {
+        },
+        headers: {
+            "content-type": "application/json",
+            "Pragma": "no-cache" ,
+            "Cache-Control": "no-cache",
+            "Expires": 0
+        }*/
+    $.ajax(settings).always(function (msg) {
+        msg = JSON.parse(msg.responseText.substr(1, msg.responseText.length-2));
+        console.log(msg);
+    //}).always(function (msg) {
         //console.log(msg);
         var newOrders = msg.newOrders;
         var activePromos = msg.activePromos;
@@ -317,15 +341,35 @@ var promotion_id = '';
 const API_URL = 'http://syst.restaurantathome.be/api/';
 
 function check_new_orders(restoId) {
-    $.ajax({
-        method: "POST",
+    var settings = {
+        "async": true,
+        "crossDomain": true,
         url: API_URL + 'dashboard/neworders/' + restoId,
-        dataType: "jsonp",
-        crossDomain: true,
-        xhrFields: {
-            withCredentials: true
-        }
-    }).always(function (msg) {
+        method: "POST",
+        "headers": {
+            "hash": Base64.decode(Cookies.get("hash")),
+            "content-type": "application/json",
+            "Pragma": "no-cache" ,
+            "Cache-Control": "no-cache",
+            "Expires": 0
+        },
+        "cache": false,
+        "processData": false
+    }
+
+    //$.ajax({
+    //    method: "POST",
+    //    url: API_URL + 'dashboard/neworders/' + restoId,
+    //    dataType: "jsonp",
+    //    crossDomain: true,
+    //    xhrFields: {
+    //        withCredentials: true
+    //    }
+    //}).always(function (msg) {
+    $.ajax(settings).always(function (response) {
+        msg = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+        console.log(msg);
+
         if(parseInt(msg.count) !== 0) {
             if(parseInt(msg.count) === 1) {
                 $('#multiple_orders').addClass('hidden');

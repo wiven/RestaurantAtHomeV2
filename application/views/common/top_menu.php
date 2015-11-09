@@ -29,7 +29,8 @@
 				<div class="collapse navbar-collapse" id="header-menu">
 					<ul class="nav navbar-nav navbar-right">
 						<li>
-							<a href="#" data-toggle="modal" data-target=".login-modal" data-backdrop="static">Login / registreer</a>
+<!--							<a href="/login" data-toggle="modal" data-target=".login-modal" data-backdrop="static">Login / registreer</a>-->
+							<a href="/login">Login / registreer</a>
 						</li>
 					</ul>
 				</div>

@@ -270,24 +270,9 @@ function setUserHash(hash, email) {
             try {
                 switch(response.type) {
                     case "Client":
-
                         Cookies.set('hash', Base64.encode(response.hash, { expires: 0 }));
                         Cookies.set('username', Base64.encode(response.name+' '+response.surname, { expires: 0 }));
-
                         window.location.href = '/';
-
-                        try {
-                            alert(REDIRECT_URL);
-                            if(REDIRECT_URL.length != 0) {
-
-                                window.location.href = '/'+REDIRECT_URL;
-                            } else {
-                                window.location.href = '/';
-                            }
-                        } catch(e) {
-                            window.location.href = '/';
-                        }
-
                         break;
                     case "Resto":
                         Cookies.set('hash', Base64.encode(response.hash, { expires: 0 }));
@@ -296,6 +281,17 @@ function setUserHash(hash, email) {
                         try {
                             if(response.resto.id.length != 0) {
                                 Cookies.set('restoId', Base64.encode(response.resto.id, { expires: 0 }));
+
+                                try {
+                                    if(REDIRECT_URL.length != 0) {
+
+                                        window.location.href = '/'+REDIRECT_URL;
+                                    } else {
+                                        window.location.href = '/dashboard';
+                                    }
+                                } catch(e) {
+                                    window.location.href = '/dashboard';
+                                }
                             } else {
                                 $('#login_danger .alert').text('Er is geen restaurant aan dit account gekoppeld');
                                 $('#login_danger').removeClass('hidden');

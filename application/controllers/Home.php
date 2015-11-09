@@ -9,7 +9,7 @@ class Home extends CI_Controller
     {
 
         $data_header = array(
-            'page_title' => ' - Homeapge',
+            'page_title' => ' - Homepage',
             'additional_styles' => ''
         );
 
