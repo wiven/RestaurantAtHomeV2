@@ -9790,12 +9790,6 @@ span.select2-selection.select2-selection--single:focus {
     background-color: #3F81B5 !important;
 }
 
-#map_search_pane {
-    width: calc(50% - 30px);
-    position: fixed !important;
-    right: 30px !important;
-}
-
 .tt-menu {
     background: #fff;
     width: 100%;
@@ -9821,6 +9815,7 @@ select#where {
 
 input#what {
     outline: none;
+    width: 100%;
 }
 
 .resto_current_state {
@@ -10040,10 +10035,16 @@ a.product_info {
     color: white !important;
 }
 
-div#map_search_pane {
+/*div#map_search_pane {
     position: fixed !important;
     right: 0 !important;
 }
+
+#map_search_pane {
+    width: calc(50% - 30px);
+    position: fixed !important;
+    right: 30px !important;
+}*/
 
 #logo_resto {
     max-width: 100%;
