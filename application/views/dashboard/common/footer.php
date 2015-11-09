@@ -9,8 +9,8 @@
 <script src="<?php echo public_url(); ?>js/dashboard.js"></script>
 <script src="<?php echo public_url(); ?>js/base64.js"></script>
 <script src="<?php echo public_url(); ?>js/cookie.js"></script>
-<script src="<?php echo public_url(); ?>js/parsley.js"></script>
-<script src="<?php echo public_url(); ?>js/parsley-nl.js"></script>
+<!--<script src="<?php /*echo public_url(); */?>js/parsley.js"></script>
+<script src="<?php /*echo public_url(); */?>js/parsley-nl.js"></script>-->
 <script src="<?php echo public_url(); ?>js/jquery-placeholder.js"></script>
 <script src="<?php echo public_url(); ?>js/jquery-password-check.js"></script>
 <?php echo (isset($additional_scripts) ? $additional_scripts : '') ?>
