@@ -13,9 +13,8 @@ const API_URL = 'http://syst.restaurantathome.be/api/';
 $(document).ready(function () {
     // get all the resto data
     getInitialRestoInfo(resto_id);
-
     // get all the social media links
-    getSocialLinks(resto_id);
+    //getSocialLinks(resto_id);
 
     $(".day_openings").bootstrapSwitch({
         onText: 'open',
@@ -49,7 +48,7 @@ $('#editSocialModal').off().on('show.bs.modal', function() {
 
     // creating new product
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         $.each(response, function(index,item) {
             switch(response[index].socialmediatypeId) {
@@ -509,7 +508,7 @@ $('#editPaymentsModal').off().on('show.bs.modal', function() {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         $('#paymentsForm').empty();
 
@@ -535,7 +534,7 @@ $('#editPaymentsModal').off().on('show.bs.modal', function() {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         $.each(response, function(index,item) {
             $('[name="payment'+response[index].id+'"]').attr("checked", true);
@@ -560,32 +559,39 @@ $('#editContactModal').on('hide.bs.modal', function(e) {
 });
 
 function getKitchenType(kitchenTypeId) {
-    var settings = {
-        "async": true,
-        "crossDomain": true,
-        "url": API_URL+"manage/kitchentype/" + kitchenTypeId,
-        "method": "GET",
-        "headers": {
-            "content-type": "application/json",
-            "Pragma": "no-cache" ,
-            "Cache-Control": "no-cache",
-            "Expires": 0
-        },
-        "cache": false,
-        "processData": false
-    }
+    $('.restoKitchen').html('Biologisch');
 
-    // creating new product
-    $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
-
-        if(response[0].name.length != 0) {
-            $('.restoKitchen').html(response[0].name);
-            kitchenTypeIdDb = response[0].id;
-        } else {
-            $('.restoKitchen').hide();
+    /*try {
+        var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": API_URL+"manage/kitchentype/" + kitchenTypeId,
+            "method": "GET",
+            "headers": {
+                "hash": Base64.decode(Cookies.get('hash')),
+                "Access-Control-Allow-Origin":  '*',
+                "content-type": "application/json",
+                "Pragma": "no-cache",
+                "Cache-Control": "no-cache",
+                "Expires": 0
+            },
+            "cache": false,
+            "processData": false
         }
-    });
+
+        $.ajax(settings).always(function (response) {
+            response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+
+            /!*if(response[0].name.length != 0) {
+                $('.restoKitchen').html(response.name);
+                kitchenTypeIdDb = response.id;
+            } else {
+                $('.restoKitchen').hide();
+            }*!/
+        });
+    } catch (err) {
+        console.log(err);
+    }*/
 }
 
 function getSocialLinks(restoId) {
@@ -606,7 +612,7 @@ function getSocialLinks(restoId) {
 
     // creating new product
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         $.each(response, function(index,item) {
             switch(response[index].socialmediatypeId) {
@@ -706,32 +712,164 @@ function getInitialRestoInfo(restoId) {
     $('#loaderDiv').removeClass('hidden');
     $('#restoInfoDiv').addClass('hidden');
 
-    var settings = {
-        "async": true,
-        "crossDomain": true,
-        "url": API_URL + "dashboard/profile/" + restoId,
-        "method": "GET",
-        "headers": {
-            "hash": Base64.decode(Cookies.get('hash')),
-            "content-type": "application/json",
-            "Pragma": "no-cache" ,
-            "Cache-Control": "no-cache",
-            "Expires": 0
-        },
-        "processData": false
+    try {
+        var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": API_URL + "dashboard/profile/" + parseInt(restoId),
+            "method": "GET",
+            "headers": {
+                "hash": Base64.decode(Cookies.get('hash')),
+                "Access-Control-Allow-Origin":  '*',
+                "content-type": "application/json",
+                "Pragma": "no-cache",
+                "Cache-Control": "no-cache",
+                "Expires": 0
+            },
+            "cache": false,
+            "processData": false
+        }
+
+        $.ajax(settings).always(function (response) {
+            response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+            console.log(response);
+
+            restoName = response.restaurantInfo.name;
+            $('input[name="restoName"]').val(response.restaurantInfo.name);
+            $('[name="restoComment"]').text(response.restaurantInfo.comment);
+
+            // LEFT COLUMN
+            $('.restoAddress').html(response.addressInfo.street+' '+response.addressInfo.number+', '+response.addressInfo.postcode+' '+response.addressInfo.city);
+            setLatLongAddress(response.addressInfo.id);
+            addressIdDb = response.addressInfo.id;
+
+            $('.restoPhone').html(response.restaurantInfo.phone);
+            $('.restoEmail').html('<a href="mailto:'+response.restaurantInfo.email+'">'+response.restaurantInfo.email+'</a>');
+            $('.restoUrl').html('<a href="'+response.restaurantInfo.url+'" target="_blank">'+response.restaurantInfo.url+'</a>');
+
+            if(response.specialties.length != 0) {
+                $('.restoSpecialty').html(response.specialties[0].name);
+            } else {
+                $('.restoSpecialtyDiv').hide();
+            }
+
+            getKitchenType(response.restaurantInfo.kitchentypeId);
+
+            // CENTER COLUMN
+            if(response.restaurantInfo.logoPhoto != null) {
+                //console.log(response.restaurantInfo.logoPhoto);
+                $('.restoLogo').attr('src', response.restaurantInfo.logoPhoto.url);
+                //$('.restoLogo').attr('src', '../api/files/'+response.restaurantInfo.logoPhoto);
+            } else {
+                $('.restoLogo').attr('src', 'http://placehold.it/450x210');
+            }
+
+            // RIGHT COLUMN
+            var openingHoursContent = '';
+            var daysOfWeek = Array('Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo');
+            var openingHoursFromDB = Array();
+            var d = new Date();
+            var n = d.getDay();
+
+            $.each(response.openingHours, function(index,item) {
+                var opening = response.openingHours[index];
+                var day = opening.dayOfWeek;
+
+                if(opening.open == "0") {
+                    openingHoursFromDB[day] = daysOfWeek[day]+': Gesloten';
+                } else {
+                    var from = opening.fromTime.substr(0, opening.fromTime.length-3);
+                    var to = opening.toTime.substr(0, opening.toTime.length-3);
+                    openingHoursFromDB[day] = daysOfWeek[day]+': '+from+' - '+to;
+                }
+            });
+
+            $.each(openingHoursFromDB, function(index,item) {
+                if(typeof(openingHoursFromDB[index]) != "undefined") {
+                    if(index == (n-1)) {
+                        openingHoursContent+='<strong>'+openingHoursFromDB[index]+'</strong>';
+                    } else {
+                        openingHoursContent+=openingHoursFromDB[index];
+                    }
+                    openingHoursContent+='<br />';
+                }
+            });
+
+            // resetting the payment methods
+            $('.PaymentCash').addClass('hidden');
+            $('.PaymentBancontact').addClass('hidden');
+            $('.PaymentCredit').addClass('hidden');
+            $('.PaymentBitcoin').addClass('hidden');
+            $('.PaymentSodexo').addClass('hidden');
+            $('.PaymentEMV').addClass('hidden');
+
+            // setting the payment methods
+            $.each(response.paymentMethods, function(index,item) {
+
+                //console.log(response.paymentMethods[index].id);
+
+                switch(response.paymentMethods[index].id) {
+                    case "1":
+                        $('.PaymentCash').removeClass('hidden');
+                        break;
+                    case "2":
+                        $('.PaymentBancontact').removeClass('hidden');
+                        break;
+                    case "3":
+                        $('.PaymentCredit').removeClass('hidden');
+                        break;
+                    case "4":
+                        $('.PaymentBitcoin').removeClass('hidden');
+                        break;
+                    case "5":
+                        $('.PaymentSodexo').removeClass('hidden');
+                        break;
+                    case "6":
+                        $('.PaymentEMV').removeClass('hidden');
+                        break;
+                    default: console.log();
+                }
+            });
+
+            $('#RestoOpeningHours').html(openingHoursContent);
+
+            // setting the 'edit contact modal' values
+            $('input[name="restoAddress"]').val(response.addressInfo.street+' '+response.addressInfo.number+', '+response.addressInfo.postcode+' '+response.addressInfo.city);
+            $('input[name="restoPhone"]').val(response.restaurantInfo.phone);
+            $('input[name="restoEmail"]').val(response.restaurantInfo.email);
+            $('input[name="restoWebsite"]').val(response.restaurantInfo.url);
+
+            // filling the 'specialty' dropdown
+            fillSpecialties();
+            if(response.specialties.length != 0) {
+                specialtyId = response.specialties[0].id;
+            }
+
+
+            // filling the 'specialty' dropdown
+            getKitchenTypes();
+
+            getAndSetPayments();
+
+            // hiding the loader and showing the content
+            $('#loaderDiv').addClass('hidden');
+            $('#restoInfoDiv').removeClass('hidden');
+        });
+    } catch (err) {
+        console.log(err);
     }
 
-    // creating new product
-    $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+    // getting resto info
+    /*$.ajax(settings).always(function (response) {
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
-        //console.log(response);
+        console.log(response);
 
         restoName = response.restaurantInfo.name;
         $('input[name="restoName"]').val(response.restaurantInfo.name);
         $('[name="restoComment"]').text(response.restaurantInfo.comment);
 
-        /* LEFT COLUMN */
+        /!* LEFT COLUMN *!/
         $('.restoAddress').html(response.addressInfo.street+' '+response.addressInfo.number+', '+response.addressInfo.postcode+' '+response.addressInfo.city);
         setLatLongAddress(response.addressInfo.id);
         addressIdDb = response.addressInfo.id;
@@ -748,7 +886,7 @@ function getInitialRestoInfo(restoId) {
 
         getKitchenType(response.restaurantInfo.kitchentypeId);
 
-        /* CENTER COLUMN */
+        /!* CENTER COLUMN *!/
         //console.log(response.restaurantInfo.logoPhoto);
         if(response.restaurantInfo.logoPhoto != null) {
             //console.log(response.restaurantInfo.logoPhoto);
@@ -758,7 +896,7 @@ function getInitialRestoInfo(restoId) {
             $('.restoLogo').attr('src', 'http://placehold.it/450x210');
         }
 
-        /* RIGHT COLUMN */
+        /!* RIGHT COLUMN *!/
         var openingHoursContent = '';
         var daysOfWeek = Array('Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo');
         var openingHoursFromDB = Array();
@@ -848,18 +986,51 @@ function getInitialRestoInfo(restoId) {
         // hiding the loader and showing the content
         $('#loaderDiv').addClass('hidden');
         $('#restoInfoDiv').removeClass('hidden');
-    });
+    });*/
 }
 
 function setLatLongAddress(addressId) {
+    try {
+        var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": API_URL+"user/address/" + addressId,
+            "method": "GET",
+            "headers": {
+                "hash": Base64.decode(Cookies.get('hash')),
+                "Access-Control-Allow-Origin":  '*',
+                "content-type": "application/json",
+                "Pragma": "no-cache",
+                "Cache-Control": "no-cache",
+                "Expires": 0
+            },
+            "cache": false,
+            "processData": false
+        }
+
+        $.ajax(settings).always(function (response) {
+            response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+            //console.log(response);
+
+            $('.restoAddress').attr('data-lat', response.latitude);
+            $('.restoAddress').attr('data-long', response.longitude);
+        });
+    } catch (err) {
+        console.log(err);
+    }
+    /*
+
+
     var settings = {
         "async": true,
         "crossDomain": true,
         "url": API_URL+"user/address/" + addressId,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -869,11 +1040,10 @@ function setLatLongAddress(addressId) {
 
     // creating new product
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
-        $('.restoAddress').attr('data-lat', response[0].latitude);
-        $('.restoAddress').attr('data-long', response[0].longitude);
-    });
+
+    });*/
 }
 
 function fillSpecialties() {
@@ -883,6 +1053,7 @@ function fillSpecialties() {
         "url": API_URL+"restaurant/speciality/all/",
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
             "content-type": "application/json",
             "Pragma": "no-cache" ,
             "Cache-Control": "no-cache",
@@ -894,7 +1065,7 @@ function fillSpecialties() {
 
     // creating new product
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         $('[name="restoSpecialty"]').empty();
         $('[name="restoSpecialty"]').append('<option></option>');
@@ -934,6 +1105,7 @@ function getKitchenTypes() {
         "url": API_URL+"manage/kitchentype/all/",
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
             "content-type": "application/json",
             "Pragma": "no-cache" ,
             "Cache-Control": "no-cache",
@@ -945,12 +1117,15 @@ function getKitchenTypes() {
 
     // creating new product
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        alert('ok');
+        //response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+        console.log(response);
 
         $('[name="restoKitchenType"]').empty();
         $('[name="restoKitchenType"]').append('<option></option>');
 
         $.each(response, function(index,item) {
+            console.log(item);
             if(response[index].name.length != 0) {
                 $('[name="restoKitchenType"]').append('<option value="'+response[index].id+'">'+response[index].name+'</option>');
             }
@@ -1138,7 +1313,7 @@ function updateRestoInfo(info, restoId) {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         console.log(response);
 
@@ -1188,7 +1363,7 @@ function getAndSetPayments() {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         $('#paymentsForm').empty();
 
@@ -1214,7 +1389,7 @@ function getAndSetPayments() {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         $.each(response, function(index,item) {
             $('[name="payment'+response[index].id+'"]').attr("checked", true);
@@ -1275,7 +1450,7 @@ function deletePaymentMethod(pm) {
 
     // creating new product
     $.ajax(settings).always(function (response) {
-        //response = JSON.parse(response.responseText.substr(1, response.length-2));
+        //response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
     });
 }
 
@@ -1297,7 +1472,7 @@ function getOpeningHours() {
 
     // creating new product
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         $.each(response.openingHours, function(index,item) {
             var fromShow = response.openingHours[index].fromTime.substr(0,5);

@@ -1,5 +1,3 @@
-'use strict'
-
 const API_URL = 'http://syst.restaurantathome.be/api/';
 
 function getRestaurant(resto, updateResults) {
@@ -163,7 +161,7 @@ function getRestaurant(resto, updateResults) {
                                     '<div class="col-lg-5 col-sm-5 col-xs-5">'+
                                         '<h3>'+item.name+'</h3>'+
                                         '<h5><span class="label label-warning hidden-sm">Specialiteit</span></h5>'+
-                                        '<p>item.description</p>'+
+                                        '<p>'+item.description+'</p>'+
                                     '</div>'+
                                     '<div class="col-lg-4 col-sm-4 col-xs-4">'+
                                         '<div class="input-group">'+
@@ -243,7 +241,7 @@ function getRestaurant(resto, updateResults) {
                                 '<div class="col-lg-5 col-sm-5 col-xs-5">'+
                                 '<h3>'+item.name+'</h3>'+
                                 '<h5><span class="label label-warning hidden-sm">Specialiteit</span></h5>'+
-                                '<p>item.description</p>'+
+                                '<p>'+item.description+'</p>'+
                                 '</div>'+
                                 '<div class="col-lg-4 col-sm-4 col-xs-4">'+
                                 '<div class="input-group">'+
@@ -283,7 +281,7 @@ function getRestaurant(resto, updateResults) {
                                 '<div class="col-lg-5 col-sm-5 col-xs-5">'+
                                 '<h3>'+item.name+'</h3>'+
                                 '<h5><span class="label label-warning hidden-sm">Specialiteit</span></h5>'+
-                                '<p>item.description</p>'+
+                                '<p>'+item.description+'</p>'+
                                 '</div>'+
                                 '<div class="col-lg-4 col-sm-4 col-xs-4">'+
                                 '<div class="input-group">'+
@@ -323,7 +321,7 @@ function getRestaurant(resto, updateResults) {
                                 '<div class="col-lg-5 col-sm-5 col-xs-5">'+
                                 '<h3>'+item.name+'</h3>'+
                                 '<h5><span class="label label-warning hidden-sm">Specialiteit</span></h5>'+
-                                '<p>item.description</p>'+
+                                '<p>'+item.description+'</p>'+
                                 '</div>'+
                                 '<div class="col-lg-4 col-sm-4 col-xs-4">'+
                                 '<div class="input-group">'+
