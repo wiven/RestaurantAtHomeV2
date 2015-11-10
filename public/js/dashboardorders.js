@@ -1,4 +1,5 @@
 var orders_html = '', prodName = '', clientName = '', cAddress = '';
+var orderUserId = 0;
 var resto_id = Base64.decode(Cookies.get('restoId'));
 var orderId = 0;
 //const API_URL = 'http://localhost/RestaurantAtHomeAPI/';
@@ -178,24 +179,40 @@ function getOrderInfo(ordId, cName) {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.substr(1, response.length - 2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
 
-        //console.log(response);
+        console.log(response);
         getFullAddress(response.addressId);
+        getPaymentMethod(response.paymentmethodid);
 
         var odt = response.orderDateTime;
 
         $('#orderCollectDate').html(odt.substr(8, 2) + '/' + odt.substr(5, 2) + '/' + odt.substr(0, 4));
         $('#orderCollectHour').html(odt.substr(11, 2) + 'u' + odt.substr(14, 2));
-        //$('#orderPaymentMethod').html(response.userId);
+
         $('#orderClientName').html(cName);
         setTimeout(function () {
             $('#orderClientAddress').html(cAddress);
+            switch (response.paymentStatus) {
+                case 'Payed':
+                    $('#orderPaymentMethod').append(' (Betaald)');
+                    $('#orderPaymentMethod').addClass('label-success');
+                    $('#orderPaymentMethod').removeClass('label-warning');
+                    break;
+                case 'Pending':
+                    $('#orderPaymentMethod').append(' (In afwachting)');
+                    $('#orderPaymentMethod').addClass('label-warning');
+                    $('#orderPaymentMethod').removeClass('label-success');
+                    break;
+                default: return;
+            }
         }, 500);
 
         try {
             if (response.couponId.length != 0) {
-                $('#orderCouponCode').html(response.couponId);
+                $('#orderCouponCode').html('ja');
+            } else {
+                $('#orderCouponCode').html('nee');
             }
         } catch(err) {
             $('#orderCouponCode').html('-');
@@ -205,10 +222,10 @@ function getOrderInfo(ordId, cName) {
         $('#orderProducts').empty('');
 
         $.each(response.lines, function(index,item) {
-            console.log(item);
-            getProductName(item.productId);
+            //console.log(item);
+            //getProductName(item.productId);
             setTimeout(function() {
-                $('#orderProducts').append('<li>'+item.quantity+'x '+prodName+' ('+item.unitPrice+'/stuk)</li>');
+                $('#orderProducts').append('<li>'+item.quantity+'x '+item.name+' ('+item.price+'/stuk)</li>');
             }, 500);
         });
 
@@ -220,16 +237,56 @@ function getOrderInfo(ordId, cName) {
         }, 500);*/
 
         $('#orderTotalAmount').html(response.amount);
-        $('.orderMarkBusy').off().on('click', function() { changeOrderState(ordId, 'busy'); });
+        $('.orderMarkBusy').off().on('click', function() { changeOrderState(response, 'busy'); });
         $('.orderMarkReady').off().on('click', function() { changeOrderState(ordId, 'ready'); });
     });
 }
 
-function getProductName(prodId) {
+function changeOrderState(order, statusCode) {
+    var updatedOrder = {
+        'id': order.id,
+        'userId': order.userId,
+        'restaurantId': order.restaurantId,
+        'orderStatusId': statusCode,
+        'amount': order.amount,
+        'orderDateTime': order.orderDateTime,
+        'comment': order.comment,
+        'addressId': order.addressId,
+        'couponId': order.couponId,
+        'creationDateTime': order.creationDateTime
+    };
+
+    console.log(updatedOrder);
+
+    /*var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": API_URL+"manage/paymentmethod/"+pmId,
+        "method": "GET",
+        "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
+            "content-type": "application/json",
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache",
+            "Expires": 0
+        },
+        "cache": false,
+        "processData": false,
+        "data": JSON.stringify(updatedOrder)
+    }
+
+    $.ajax(settings).always(function (response) {
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
+        $('#orderPaymentMethod').html(response.name);
+    });*/
+}
+
+function getPaymentMethod(pmId) {
     var settings = {
         "async": true,
         "crossDomain": true,
-        "url": API_URL+"product/"+prodId,
+        "url": API_URL+"manage/paymentmethod/"+pmId,
         "method": "GET",
         "headers": {
             "hash": Base64.decode(Cookies.get('hash')),
@@ -244,11 +301,35 @@ function getProductName(prodId) {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
-
-        prodName = response.name;
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
+        $('#orderPaymentMethod').html(response.name);
     });
 }
+
+//function getProductName(prodId) {
+//    var settings = {
+//        "async": true,
+//        "crossDomain": true,
+//        "url": API_URL+"product/"+prodId,
+//        "method": "GET",
+//        "headers": {
+//            "hash": Base64.decode(Cookies.get('hash')),
+//            "Access-Control-Allow-Origin":  '*',
+//            "content-type": "application/json",
+//            "Pragma": "no-cache",
+//            "Cache-Control": "no-cache",
+//            "Expires": 0
+//        },
+//        "cache": false,
+//        "processData": false
+//    }
+//
+//    $.ajax(settings).always(function (response) {
+//        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+//
+//        prodName = response.name;
+//    });
+//}
 
 function getFullAddress(addressId) {
     var settings = {
@@ -270,10 +351,10 @@ function getFullAddress(addressId) {
 
     $.ajax(settings).always(function (response) {
         response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
-        if(response[0].addition.length != 0) {
-            cAddress = response[0].street+' '+response[0].number+'/'+response[0].addition+', '+response[0].postcode+' '+response[0].city;
+        if(response.addition.length != 0) {
+            cAddress = response.street+' '+response.number+'/'+response.addition+', '+response.postcode+' '+response.city;
         } else {
-            cAddress = response[0].street+' '+response[0].number+', '+response[0].postcode+' '+response[0].city;
+            cAddress = response.street+' '+response.number+', '+response.postcode+' '+response.city;
         }
 
     });
