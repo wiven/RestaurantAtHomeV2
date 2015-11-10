@@ -123,6 +123,7 @@ $(document).ready(function () {
                     "crossDomain": true,
                     "url": API_URL+"product",
                     "method": "POST",
+                    "hash": base64.decode(Cookies.get("hash")),
                     "headers": {
                         "content-type": "application/json"
                     },
@@ -184,42 +185,14 @@ $(document).ready(function () {
     });
 });
 
-function getProductPhoto(product_id) {
-    $.ajax({
-        method: "GET",
-        url: API_URL + 'product/' + product_id,
-        dataType: "jsonp",
-        crossDomain: true,
-        xhrFields: {
-            withCredentials: true
-        }
-    }).always(function (msg) {
-        /*if((msg.length != 0) && (msg.photo != null)) {
-            prodUrl = msg.photo.url;
-        } else {
-            prodUrl = '';
-        }*/
 
-        if((msg.length != 0) && (msg.photo != null)) {
-            if((msg.photo.url).indexOf('null') != -1) {
-                product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+msg.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="/public/img/default_product.gif"><div class="caption"><h3 id="thumbnail-label">'+msg.name+'</h3></div></div></div></a>';
-            } else {
-                product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+msg.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="'+msg.photo.url+'"><div class="caption"><h3 id="thumbnail-label">'+msg.name+'</h3></div></div></div></a>';
-            }
-        } else {
-            product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+msg.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="/public/img/default_product.gif"><div class="caption"><h3 id="thumbnail-label">'+msg.name+'</h3></div></div></div></a>';
-        }
-    }).fail(function (jqXHR, textStatus) {
-        console.log(jqXHR);
-        alert("Request failed: " + textStatus);
-    });
-}
 
 function getProducts() {
     var settings = {
         "async": true,
         "crossDomain": true,
-        url: API_URL + 'restaurant/product/all/' + resto_id,
+        url: API_URL + 'dashboard/products/'+resto_id+"/0/12",
+        //url: API_URL + 'restaurant/product/all/' + resto_id,
         "method": "GET",
         "headers": {
             "hash": Base64.decode(Cookies.get('hash')),
@@ -231,32 +204,45 @@ function getProducts() {
         },
         "cache": false,
         "processData": false
-    }
+    };
 
     $.ajax(settings).always(function (response) {
+        console.log(response.status);
         if(response.status != 401) {
             response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
         } else {
             return;
         }
 
-        //console.log(response);
+        console.log(response);
 
         //console.log(msg);
-        if(response.length != 0) {
-            $('#resto_products').html('');
+        if(response.products.length != 0) {
+            //$('#resto_products').html('');
 
-            $.each(response, function(index,item) {
-                getProductPhoto(item.id);
-                $('#resto_products').html('<div class="row" id="loaderDiv" style="margin: 80px;"><span class="fa fa-spinner fa-spin fa-5x fa-fw" style="width: 100%; z-index: 9999;"></span></div>');
+            //$.each(response, function(index,item) {
+            //    getProductPhoto(item.id);
+            //    //$('#resto_products').html('<div class="row" id="loaderDiv" style="margin: 80px;"><span class="fa fa-spinner fa-spin fa-5x fa-fw" style="width: 100%; z-index: 9999;"></span></div>');
+            //});
+
+            $('#resto_products').html('<div class="row" id="loaderDiv" style="margin: 80px;"><span class="fa fa-spinner fa-spin fa-5x fa-fw" style="width: 100%; z-index: 9999;"></span></div>');
+
+            $.each(response.products, function(index,item) {
+                if((item.length != 0) && (item.photo != null)) {
+                    if(item.photo.thumbnailUrl.indexOf('null') != -1) {
+                        product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="/public/img/default_product.gif"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
+                    } else {
+                        product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="'+item.photo.thumbnailUrl+'"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
+                    }
+                } else {
+                    product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="/public/img/default_product.gif"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
+                }
             });
-
-
 
             setTimeout(function() {
                 $('#resto_products').html(product_html);
-                $('#resto_products .thumbnail img').matchHeight();
-                $('#resto_products .thumbnail').matchHeight();
+                //$('#resto_products .thumbnail img').matchHeight();
+                //$('#resto_products .thumbnail').matchHeight();
             }, 1000);
         } else {
             $('#resto_products').html('<div class="alert alert-info text-center" role="alert" id="no_products_msg"><span class="fa fa-info-circle fa-fw"></span> Er zijn  nog geen producten te vinden.<br /><a href="#" data-toggle="modal" data-title="Nieuw product aanmaken" data-target="#newProductModal" data-backdrop="static" id="btn_new_product">Klik hier</a> om een nieuw product aan te maken.</div>');
@@ -303,7 +289,7 @@ function getProductCategories() {
         },
         "cache": false,
         "processData": false
-    }
+    };
 
     $.ajax(settings).always(function (msg) {
         msg = JSON.parse(msg.responseText.substr(1, msg.responseText.length-2));
@@ -412,6 +398,9 @@ function updatedProductPhotoUpload() {
         done: function (e, data) {
             $.each(data.result.files, function (index, file) { });
         },
+        headers:{
+            "hash": Base64.decode(Cookies.get('hash'))
+        },
         progressall: function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
 
@@ -436,6 +425,9 @@ function productPhotoUpload() {
         done: function (e, data) {
             $.each(data.result.files, function (index, file) { });
         },
+        headers:{
+            "hash": Base64.decode(Cookies.get('hash'))
+        },
         progressall: function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
 
@@ -456,6 +448,9 @@ function deleteProduct(prodId) {
         url: API_URL + 'product/delete/' + prodId,
         dataType: "jsonp",
         crossDomain: true,
+        headers:{
+            "hash": Base64.decode(Cookies.get('hash'))
+        },
         xhrFields: {
             withCredentials: true
         }
@@ -492,12 +487,12 @@ function updateProduct(values, restoId, prodId) {
         "method": "PUT",
         "headers": {
             "content-type": "application/json",
-            "hash": "bade6027da78136bdd57a3c574d7afb4af1395d9"
+            "hash": Base64.decode(Cookies.get('hash'))
         },
         cache: false,
         "processData": false,
         "data": JSON.stringify(transferData)
-    }
+    };
 
     $.ajax(settings).always(function (response) {
         //console.log();
@@ -511,10 +506,11 @@ function relateProducts(newProdId, relatedProd) {
         "url": API_URL+"product/related/"+newProdId+"/"+relatedProd,
         "method": "POST",
         "headers": {
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "hash": Base64.decode(Cookies.get('hash'))
         },
         "processData": false
-    }
+    };
 
     // creating new product link
     $.ajax(settings).always(function (response) {
@@ -616,7 +612,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
             },
             "cache": false,
             "processData": false
-        }
+        };
 
         $.ajax(settings).always(function (response) {
             if(response.status != 401) {
@@ -705,7 +701,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
             },
             "cache": false,
             "processData": false
-        }
+        };
 
         $.ajax(settings).always(function (response) {
             if(response.status != 401) {
@@ -745,7 +741,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
                  select_to_add.empty();
                  select_to_add.append('<option value=""></option>');*/
 
-                var relatedProducts = Array();
+                var relatedProducts = [];
 
                 $.each(msg, function(index, item) {
                     relatedProducts.push(item.id);
@@ -1038,7 +1034,7 @@ function searchProducts(searchTerm) {
         },
         "cache": false,
         "processData": false
-    }
+    };
 
     // creating new product
     $.ajax(settings).always(function (response) {
@@ -1059,7 +1055,7 @@ function searchProducts(searchTerm) {
             });
 
             $('#resto_products').html(product_html);
-            $('#resto_products .thumbnail img').matchHeight();
+            //$('#resto_products .thumbnail img').matchHeight();
         } else {
             if(searchTerm.length != 0) {
                 $('#resto_products').html('<div class="alert alert-info text-center hidden" role="alert" id="no_products_msg"><span class="fa fa-info-circle fa-fw"></span> Er zijn geen producten gevonden met de naam "<span id="searchTermDisplay"></span>".<br /><a href="#" data-toggle="modal" data-title="Nieuw product aanmaken" data-target="#newProductModal" data-backdrop="static" id="btn_new_product">Klik hier</a> om een nieuw product aan te maken.</div>');
@@ -1087,7 +1083,7 @@ function searchProductsCategory(searchTerm) {
         },
         "cache": false,
         "processData": false
-    }
+    };
 
     $.ajax(settings).always(function (response) {
         response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
@@ -1108,7 +1104,7 @@ function searchProductsCategory(searchTerm) {
             });
 
             $('#resto_products').html(product_html);
-            $('#resto_products .thumbnail img').matchHeight();
+            //$('#resto_products .thumbnail img').matchHeight();
         } else {
             if(searchTerm.length != 0) {
                 $('#resto_products').html('<div class="alert alert-info text-center hidden" role="alert" id="no_products_msg"><span class="fa fa-info-circle fa-fw"></span> Er zijn geen producten gevonden van deze categorie.<br /><a href="#" data-toggle="modal" data-title="Nieuw product aanmaken" data-target="#newProductModal" data-backdrop="static" id="btn_new_product">Klik hier</a> om een nieuw product aan te maken.</div>');
@@ -1135,7 +1131,7 @@ function searchCombined(searchProd, searchCat) {
         },
         "cache": false,
         "processData": false
-    }
+    };
 
     $.ajax(settings).always(function (response) {
         response = JSON.parse(response.responseText.substr(1, response.length-2));
@@ -1156,7 +1152,7 @@ function searchCombined(searchProd, searchCat) {
             });
 
             $('#resto_products').html(product_html);
-            $('#resto_products .thumbnail img').matchHeight();
+            //$('#resto_products .thumbnail img').matchHeight();
         } else {
             if((searchProd.length != 0) || (searchCat.length != 0)) {
                 $('#resto_products').html('<div class="alert alert-info text-center hidden" role="alert" id="no_products_msg"><span class="fa fa-info-circle fa-fw"></span> Er zijn geen producten gevonden van deze categorie, of met deze benaming.<br /><a href="#" data-toggle="modal" data-title="Nieuw product aanmaken" data-target="#newProductModal" data-backdrop="static" id="btn_new_product">Klik hier</a> om een nieuw product aan te maken.</div>');
@@ -1173,3 +1169,39 @@ $('#productModalSubmit').on('click', function(evt) {
 
     console.log($(this).val());
 });
+
+//Not used anymore
+
+//function getProductPhoto(product_id) {
+//    $.ajax({
+//        method: "GET",
+//        url: API_URL + 'product/' + product_id,
+//        dataType: "jsonp",
+//        crossDomain: true,
+//        headers: {
+//            "hash": Base64.decode(Cookies.get('hash'))
+//        },
+//        xhrFields: {
+//            withCredentials: true
+//        }
+//    }).always(function (msg) {
+//        /*if((msg.length != 0) && (msg.photo != null)) {
+//         prodUrl = msg.photo.url;
+//         } else {
+//         prodUrl = '';
+//         }*/
+//
+//        if((msg.length != 0) && (msg.photo != null)) {
+//            if((msg.photo.url).indexOf('null') != -1) {
+//                product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+msg.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="/public/img/default_product.gif"><div class="caption"><h3 id="thumbnail-label">'+msg.name+'</h3></div></div></div></a>';
+//            } else {
+//                product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+msg.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="'+msg.photo.url+'"><div class="caption"><h3 id="thumbnail-label">'+msg.name+'</h3></div></div></div></a>';
+//            }
+//        } else {
+//            product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+msg.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="/public/img/default_product.gif"><div class="caption"><h3 id="thumbnail-label">'+msg.name+'</h3></div></div></div></a>';
+//        }
+//    }).fail(function (jqXHR, textStatus) {
+//        console.log(jqXHR);
+//        alert("Request failed: " + textStatus);
+//    });
+//}
