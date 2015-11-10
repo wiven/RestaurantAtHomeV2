@@ -1,6 +1,7 @@
 const API_URL = 'http://syst.restaurantathome.be/api/';
 
-$(document).ready(function() {var settings = {
+$(document).ready(function() {
+    var settings = {
         "async": true,
         "crossDomain": true,
         "url": API_URL + 'restaurantdetail/6',
@@ -58,6 +59,28 @@ $(document).ready(function() {var settings = {
             $('.restoRegistration').removeClass('hidden');
             $('#SubmitUserBtn').text('Gebruiker en restaurant registreren');
         }*/
+    });
+
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": API_URL+"cities/all/",
+        "method": "GET",
+        "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
+            "content-type": "application/json",
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache",
+            "Expires": 0
+        },
+        "cache": false,
+        "processData": false
+    }
+
+    $.ajax(settings).always(function (response) {
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+        console.log(response);
     });
 });
 
