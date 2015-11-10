@@ -109,9 +109,6 @@ $(document).ready(function () {
             $('#partners_div').addClass('hidden');
             $('#no_partners_msg').removeClass('hidden');
         }
-    }).fail(function (jqXHR, textStatus) {
-        //console.log(jqXHR);
-        //alert("Request failed: " + textStatus);
     });
 
 
@@ -256,8 +253,13 @@ $(document).ready(function () {
             "url": API_URL+"promotion",
             "method": "PUT",
             "headers": {
-                "content-type": "application/json"
+                "hash": Base64.decode(Cookies.get("hash")),
+                "content-type": "application/json",
+                "Pragma": "no-cache" ,
+                "Cache-Control": "no-cache",
+                "Expires": 0
             },
+            "cache": false,
             "processData": false,
             "data": JSON.stringify(updated_promotion)
         }
@@ -309,9 +311,6 @@ $(document).ready(function () {
                 $.ajax(settings).always(function (response) {
                     console.log(response);
                 });
-            }).fail(function (jqXHR, textStatus) {
-                console.log(jqXHR);
-                alert("Request failed: " + textStatus);
             });
         }
     });
@@ -336,6 +335,7 @@ $(document).ready(function () {
 var product_html = '';
 var resto_id = Base64.decode(Cookies.get('restoId'));
 var promotion_id = '';
+var temp;
 
 //const API_URL = 'http://localhost/RestaurantAtHomeAPI/';
 const API_URL = 'http://syst.restaurantathome.be/api/';
@@ -345,7 +345,7 @@ function check_new_orders(restoId) {
         "async": true,
         "crossDomain": true,
         url: API_URL + 'dashboard/neworders/' + restoId,
-        method: "POST",
+        method: "GET",
         "headers": {
             "hash": Base64.decode(Cookies.get("hash")),
             "content-type": "application/json",
@@ -368,7 +368,7 @@ function check_new_orders(restoId) {
     //}).always(function (msg) {
     $.ajax(settings).always(function (response) {
         msg = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
-        console.log(msg);
+        console.log(msg.count);
 
         if(parseInt(msg.count) !== 0) {
             if(parseInt(msg.count) === 1) {
@@ -381,9 +381,6 @@ function check_new_orders(restoId) {
         } else {
             $('#new_order_box').addClass('hidden');
         }
-    }).fail(function (jqXHR, textStatus) {
-        console.log(jqXHR);
-        alert("Request failed: " + textStatus);
     });
 }
 
@@ -399,9 +396,6 @@ function get_data(method, type, id) {
     }).always(function (msg) {
         console.log(msg);
         return msg;
-    }).fail(function (jqXHR, textStatus) {
-        console.log(jqXHR);
-        alert("Request failed: " + textStatus);
     });
 }
 
@@ -482,12 +476,7 @@ $('#newActionModal').on('show.bs.modal', function(e) {
             }
 
             $('#PromotionProduct').trigger('chosen:updated');
-        }).fail(function (jqXHR, textStatus) {
-            console.log(jqXHR);
-            alert("Request failed: " + textStatus);
         });
-    }).fail(function (jqXHR, textStatus) {
-        alert("Request failed: " + textStatus);
     });
 
     var modal = $(this);

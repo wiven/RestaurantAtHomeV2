@@ -35,8 +35,7 @@
                     <div class="panel-body">
                         <div class="alert alert-info text-center" role="alert" id="no_orders_msg">
                             <span class="fa fa-info-circle fa-fw"></span> Er zijn vandaag geen bestellingen<br />
-                            Klik <a href="#">hier</a> om alle bestellingen te zien.
-<!--                            Klik <a href="/dashboard/orders">hier</a> om alle bestellingen te zien.-->
+                            Klik <a href="/dashboard/orders">hier</a> om alle bestellingen te zien.
                         </div>
 
                         <div class="table-responsive" id="todays_orders">
@@ -53,8 +52,7 @@
                             </table>
                         </div>
                         <div class="text-center">
-                            <a href="#" class="btn btn-default btn-block">
-<!--                            <a href="/dashboard/orders" class="btn btn-default btn-block">-->
+                            <a href="/dashboard/orders" class="btn btn-default btn-block">
                                 <span class="fa fa-plus-square"></span> Alle bestellingen weergeven ...
                             </a>
                         </div>
@@ -75,8 +73,7 @@
                     <div class="panel-body">
                         <div class="alert alert-info text-center hidden" role="alert" id="no_promos_msg">
                             <span class="fa fa-info-circle fa-fw"></span> Er zijn geen lopende acties<br />
-                            Klik <a href="#">hier</a> om een actie aan te maken.
-<!--                            Klik <a href="/dashboard/actions">hier</a> om een actie aan te maken.-->
+                            Klik <a href="/dashboard/actions">hier</a> om een actie aan te maken.
                         </div>
 
                         <div class="table-responsive" id="active_promos">
@@ -92,8 +89,7 @@
                             </table>
                         </div>
                         <div class="text-center">
-                            <a href="#" class="btn btn-default btn-block">
-<!--                            <a href="/dashboard/actions" class="btn btn-default btn-block">-->
+                            <a href="/dashboard/actions" class="btn btn-default btn-block">
                                 <span class="fa fa-plus-square"></span> Meer acties weergeven ...
                             </a>
                         </div>
