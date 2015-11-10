@@ -1,7 +1,8 @@
-var resto_id = 5;
+//var resto_id = 5;
 var resto_id = Base64.decode(Cookies.get('restoId'));
 var map = '', restoName = '', specialtyId = 0, kitchenTypeIdDb = 0, addressIdDb = 0;
 var latDb = '', lngDb = '';
+var setHeader;
 var addressArray = Array();
 var weekDayNames = Array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
 var weekDayNamesNL = Array('maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag', 'zondag');
@@ -28,6 +29,10 @@ $(document).ready(function () {
 
     // handle file upload for resto photos
     restoPhotosUpload();
+
+    setHeader = function (xhr) {
+        xhr.setRequestHeader('hash', Base64.decode(Cookies.get('hash')));
+    };
 });
 
 $('#editSocialModal').off().on('show.bs.modal', function() {
@@ -524,8 +529,10 @@ $('#editPaymentsModal').off().on('show.bs.modal', function() {
         "url": API_URL+"restaurant/paymentmethod/"+resto_id,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -559,9 +566,7 @@ $('#editContactModal').on('hide.bs.modal', function(e) {
 });
 
 function getKitchenType(kitchenTypeId) {
-    $('.restoKitchen').html('Biologisch');
-
-    /*try {
+    try {
         var settings = {
             "async": true,
             "crossDomain": true,
@@ -582,16 +587,16 @@ function getKitchenType(kitchenTypeId) {
         $.ajax(settings).always(function (response) {
             response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
-            /!*if(response[0].name.length != 0) {
+            if(response[0].name.length != 0) {
                 $('.restoKitchen').html(response.name);
                 kitchenTypeIdDb = response.id;
             } else {
                 $('.restoKitchen').hide();
-            }*!/
+            }
         });
     } catch (err) {
         console.log(err);
-    }*/
+    }
 }
 
 function getSocialLinks(restoId) {
@@ -601,8 +606,10 @@ function getSocialLinks(restoId) {
         "url": API_URL+"restaurant/socialmedia/all/" + restoId,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -716,7 +723,7 @@ function getInitialRestoInfo(restoId) {
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": API_URL + "dashboard/profile/" + parseInt(restoId),
+            "url": API_URL + "dashboard/profile/" + restoId,
             "method": "GET",
             "headers": {
                 "hash": Base64.decode(Cookies.get('hash')),
@@ -731,7 +738,12 @@ function getInitialRestoInfo(restoId) {
         }
 
         $.ajax(settings).always(function (response) {
-            response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+            if(response.status != 401) {
+                response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+            } else {
+                return;
+            }
+
             console.log(response);
 
             restoName = response.restaurantInfo.name;
@@ -754,6 +766,8 @@ function getInitialRestoInfo(restoId) {
             }
 
             getKitchenType(response.restaurantInfo.kitchentypeId);
+            console.log(response.restaurantInfo.kitchentypeId);
+            getSocialLinks(resto_id);
 
             // CENTER COLUMN
             if(response.restaurantInfo.logoPhoto != null) {
@@ -844,7 +858,6 @@ function getInitialRestoInfo(restoId) {
             if(response.specialties.length != 0) {
                 specialtyId = response.specialties[0].id;
             }
-
 
             // filling the 'specialty' dropdown
             getKitchenTypes();
@@ -1085,8 +1098,10 @@ function deleteSpecialty(restoId, specialtyId) {
         "url": API_URL+"restaurant/speciality/delete/"+restoId+"/"+specialtyId,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -1117,17 +1132,14 @@ function getKitchenTypes() {
 
     // creating new product
     $.ajax(settings).always(function (response) {
-        alert('ok');
-        //response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
-        console.log(response);
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         $('[name="restoKitchenType"]').empty();
         $('[name="restoKitchenType"]').append('<option></option>');
 
         $.each(response, function(index,item) {
-            console.log(item);
-            if(response[index].name.length != 0) {
-                $('[name="restoKitchenType"]').append('<option value="'+response[index].id+'">'+response[index].name+'</option>');
+            if(item.name.length != 0) {
+                $('[name="restoKitchenType"]').append('<option value="'+item.id+'">'+item.name+'</option>');
             }
         });
     });
@@ -1284,8 +1296,12 @@ function updateRestoInfo(info, restoId) {
         "url": API_URL+"restaurant",
         "method": "PUT",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "hash": "bade6027da78136bdd57a3c574d7afb4af1395d9"
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache",
+            "Expires": 0
         },
         cache: false,
         "processData": false,
@@ -1303,8 +1319,10 @@ function updateRestoInfo(info, restoId) {
         "url": API_URL+"restaurant/speciality/"+restoId,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -1319,7 +1337,7 @@ function updateRestoInfo(info, restoId) {
 
         // delete all existing specialties (preventing duplicate entries)
         $.each(response, function(index,item) {
-            deleteSpecialty(restoId, response[index].id);
+            deleteSpecialty(restoId, item.id);
         });
     });
 
@@ -1331,7 +1349,12 @@ function updateRestoInfo(info, restoId) {
             "url": API_URL+"restaurant/speciality/"+restoId+"/"+info['specialty'],
             "method": "POST",
             "headers": {
-                "content-type": "application/json"
+                "hash": Base64.decode(Cookies.get('hash')),
+                "Access-Control-Allow-Origin":  '*',
+                "content-type": "application/json",
+                "Pragma": "no-cache",
+                "Cache-Control": "no-cache",
+                "Expires": 0
             },
             "cache": false,
             "processData": false
@@ -1340,7 +1363,7 @@ function updateRestoInfo(info, restoId) {
         $.ajax(settings).always(function (response) {
             console.log('added '+info['specialty']);
         });
-    }, 500);
+    }, 400);
 
 
 }
@@ -1353,8 +1376,10 @@ function getAndSetPayments() {
         "url": API_URL+"manage/paymentmethod/all/",
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -1379,8 +1404,10 @@ function getAndSetPayments() {
         "url": API_URL+"restaurant/paymentmethod/"+resto_id,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -1390,6 +1417,7 @@ function getAndSetPayments() {
 
     $.ajax(settings).always(function (response) {
         response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+        console.log(response);
 
         $.each(response, function(index,item) {
             $('[name="payment'+response[index].id+'"]').attr("checked", true);
@@ -1406,7 +1434,7 @@ function updatePayments() {
         }
     });
 
-    getInitialRestoInfo(resto_id);
+    setTimeout(function(){ getInitialRestoInfo(resto_id); }, 500);
 
     $('#editPaymentsModal').modal('hide');
     $('body').css('opacity', 1);
@@ -1421,7 +1449,12 @@ function addPaymentMethod(pm) {
         "url": API_URL+"restaurant/paymentmethod/"+resto_id+'/'+pm,
         "method": "POST",
         "headers": {
-            "content-type": "application/json"
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
+            "content-type": "application/json",
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache",
+            "Expires": 0
         },
         "cache": false,
         "processData": false
@@ -1439,8 +1472,10 @@ function deletePaymentMethod(pm) {
         "url": API_URL+"restaurant/paymentmethod/delete/"+resto_id+'/'+pm,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -1461,8 +1496,10 @@ function getOpeningHours() {
         "url": API_URL+"dashboard/profile/"+resto_id,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -1505,7 +1542,12 @@ function updateOpeningHours(recordId, weekDay, from, to, checkOpen) {
         "url": API_URL+"restaurant/openinghour",
         "method": "PUT",
         "headers": {
-            "content-type": "application/json"
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
+            "content-type": "application/json",
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache",
+            "Expires": 0
         },
         cache: false,
         "processData": false,
@@ -1526,6 +1568,9 @@ function logoUpload() {
     $('#fileupload').fileupload({
         url: url,
         dataType: 'json',
+        beforeSend: function ( xhr ) {
+            setHeader(xhr);
+        },
         done: function (e, data) {
             $.each(data.result.files, function (index, file) {
                 console.log(file.name);

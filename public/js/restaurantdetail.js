@@ -1,4 +1,6 @@
-const API_URL = 'http://syst.restaurantathome.be/api/';
+'use strict'
+
+const API_URL = 'http://playground.restaurantathome.be/api/';
 
 function getRestaurant(resto, updateResults) {
     $("#all_results").empty();
@@ -43,10 +45,10 @@ function getRestaurant(resto, updateResults) {
         }
 
         /*if(response.restaurantDetails.specialties.length != 0) {
-            $('.restoKitchentype').text('Keuken: '+response.restaurantDetails.specialties[0].name);
-        } else {
-            $('.restoKitchentype').addClass('hidden');
-        }*/
+         $('.restoKitchentype').text('Keuken: '+response.restaurantDetails.specialties[0].name);
+         } else {
+         $('.restoKitchentype').addClass('hidden');
+         }*/
 
         $.each(response.restaurantDetails.socialMedia, function(index, item) {
             switch(item.socialmediatypeId) {
@@ -108,34 +110,34 @@ function getRestaurant(resto, updateResults) {
             $.each(response.promotions, function(index, item) {
                 $('#actiesTab').append(
                     '<article class="col-lg-6 col-md-12 menu-item clearfix">'+
-                        '<div class="col-lg-3 col-sm-3 col-xs-12">'+
-                            '<span class="fa fa-certificate fa-fw fa-5x" style="color: '+getRandomColor()+';"></span>'+
-                            //'<img src="http://lorempixel.com/300/300/food" width="100%">'+
-                        '</div>'+
-                        '<div class="col-lg-5 col-sm-5 col-xs-12">'+
-                            '<h3>'+item.name+'</h3>'+
-                            //'<h5><span class="label label-warning">Specialiteit</span></h5>'+
-                            '<p>'+item.description+'</p>'+
-                        '</div>'+
-                        '<div class="col-lg-4 col-sm-4 col-xs-12">'+
-                            '<div class="input-group">'+
-                                '<span class="input-group-btn">'+
-                                    '<button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[pr-'+item.id+']">'+
-                                        '<span class="glyphicon glyphicon-minus"></span>'+
-                                    '</button>'+
-                                '</span>'+
-                                '<input type="text" name="quant[pr-'+item.id+']" class="form-control input-number text-center" value="1" min="1" max="10">'+
-                                '<span class="input-group-btn">'+
-                                    '<button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[pr-'+item.id+']">'+
-                                        '<span class="glyphicon glyphicon-plus"></span>'+
-                                    '</button>'+
-                                '</span>'+
-                            '</div>'+
-                        '<div class="form-group">'+
-                            '<a href="#" class="btn btn-primary" style="width: 100%; margin-top: 26px;">Toevoegen</a>'+
-                            //'<p class="badge" style="color: #FFF; border: 2px solid white; background: #5cb85c; position: absolute; top: 49px; right: 5px; z-index: 500;">1</p>'+
-                        '</div>'+
-                        '</div>'+
+                    '<div class="col-lg-3 col-sm-3 col-xs-12">'+
+                    '<span class="fa fa-certificate fa-fw fa-5x" style="color: '+getRandomColor()+';"></span>'+
+                        //'<img src="http://lorempixel.com/300/300/food" width="100%">'+
+                    '</div>'+
+                    '<div class="col-lg-5 col-sm-5 col-xs-12">'+
+                    '<h3>'+item.name+'</h3>'+
+                        //'<h5><span class="label label-warning">Specialiteit</span></h5>'+
+                    '<p>'+item.description+'</p>'+
+                    '</div>'+
+                    '<div class="col-lg-4 col-sm-4 col-xs-12">'+
+                    '<div class="input-group">'+
+                    '<span class="input-group-btn">'+
+                    '<button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[pr-'+item.id+']">'+
+                    '<span class="glyphicon glyphicon-minus"></span>'+
+                    '</button>'+
+                    '</span>'+
+                    '<input type="text" name="quant[pr-'+item.id+']" class="form-control input-number text-center" value="1" min="1" max="10">'+
+                    '<span class="input-group-btn">'+
+                    '<button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[pr-'+item.id+']">'+
+                    '<span class="glyphicon glyphicon-plus"></span>'+
+                    '</button>'+
+                    '</span>'+
+                    '</div>'+
+                    '<div class="form-group">'+
+                    '<a href="#" class="btn btn-primary" style="width: 100%; margin-top: 26px;">Toevoegen</a>'+
+                        //'<p class="badge" style="color: #FFF; border: 2px solid white; background: #5cb85c; position: absolute; top: 49px; right: 5px; z-index: 500;">1</p>'+
+                    '</div>'+
+                    '</div>'+
                     '</article>'
                 );
             });
@@ -155,33 +157,33 @@ function getRestaurant(resto, updateResults) {
                             try {var prodPhoto = item.photo.thumbnailUrl; } catch (err) { var prodPhoto = 'http://placehold.it/300x300'; }
                             $('#'+productTypesTabArray[0]).append(
                                 '<article class="col-lg-6 col-md-12 menu-item clearfix">'+
-                                    '<div class="col-lg-3 col-sm-3 col-xs-3">'+
-                                        '<img src="'+prodPhoto+'" width="100%">'+
-                                    '</div>'+
-                                    '<div class="col-lg-5 col-sm-5 col-xs-5">'+
-                                        '<h3>'+item.name+'</h3>'+
-                                        '<h5><span class="label label-warning hidden-sm">Specialiteit</span></h5>'+
-                                        '<p>'+item.description+'</p>'+
-                                    '</div>'+
-                                    '<div class="col-lg-4 col-sm-4 col-xs-4">'+
-                                        '<div class="input-group">'+
-                                            '<span class="input-group-btn">'+
-                                                '<button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[pr-'+item.id+']">'+
-                                                    '<span class="glyphicon glyphicon-minus"></span>'+
-                                                '</button>'+
-                                            '</span>'+
-                                            '<input type="text" name="quant[pr-'+item.id+']" class="form-control input-number text-center" value="1" min="1" max="10">'+
-                                            '<span class="input-group-btn">'+
-                                                '<button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[pr-'+item.id+']">'+
-                                                    '<span class="glyphicon glyphicon-plus"></span>'+
-                                                '</button>'+
-                                            '</span>'+
-                                        '</div>'+
-                                        '<div class="form-group">'+
-                                            '<a href="#" class="btn btn-primary" style="width: 100%; margin-top: 26px;">Toevoegen</a>'+
-                                            '<p class="badge" style="color: #FFF; border: 2px solid white; background: #5cb85c; position: absolute; top: 49px; right: 5px; z-index: 500;">1</p>'+
-                                        '</div>'+
-                                    '</div>'+
+                                '<div class="col-lg-3 col-sm-3 col-xs-3">'+
+                                '<img src="'+prodPhoto+'" width="100%">'+
+                                '</div>'+
+                                '<div class="col-lg-5 col-sm-5 col-xs-5">'+
+                                '<h3>'+item.name+'</h3>'+
+                                '<h5><span class="label label-warning hidden-sm">Specialiteit</span></h5>'+
+                                '<p>'+item.description+'</p>'+
+                                '</div>'+
+                                '<div class="col-lg-4 col-sm-4 col-xs-4">'+
+                                '<div class="input-group">'+
+                                '<span class="input-group-btn">'+
+                                '<button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[pr-'+item.id+']">'+
+                                '<span class="glyphicon glyphicon-minus"></span>'+
+                                '</button>'+
+                                '</span>'+
+                                '<input type="text" name="quant[pr-'+item.id+']" class="form-control input-number text-center" value="1" min="1" max="10">'+
+                                '<span class="input-group-btn">'+
+                                '<button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[pr-'+item.id+']">'+
+                                '<span class="glyphicon glyphicon-plus"></span>'+
+                                '</button>'+
+                                '</span>'+
+                                '</div>'+
+                                '<div class="form-group">'+
+                                '<a href="#" class="btn btn-primary" style="width: 100%; margin-top: 26px;">Toevoegen</a>'+
+                                '<p class="badge" style="color: #FFF; border: 2px solid white; background: #5cb85c; position: absolute; top: 49px; right: 5px; z-index: 500;">1</p>'+
+                                '</div>'+
+                                '</div>'+
                                 '</article>');
                         });
                     } else {

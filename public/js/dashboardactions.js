@@ -1,6 +1,6 @@
 var orders_html = '', prodName = '', clientName = '', cAddress = '';
-var resto_id = 5;
-var orderId = 0;
+var resto_id = Base64.decode(Cookies.get('restoId'));
+var orderId = 0, promotionToUpdate = 0;
 //const API_URL = 'http://localhost/RestaurantAtHomeAPI/';
 const API_URL = 'http://syst.restaurantathome.be/api/';
 var productTypes, submitBtn = '', temp = '';
@@ -119,15 +119,21 @@ $(document).ready(function() {
                         "url": API_URL+"promotion",
                         "method": "POST",
                         "headers": {
-                            "content-type": "application/json"
+                            "hash": Base64.decode(Cookies.get('hash')),
+                            "Access-Control-Allow-Origin":  '*',
+                            "content-type": "application/json",
+                            "Pragma": "no-cache",
+                            "Cache-Control": "no-cache",
+                            "Expires": 0
                         },
+                        "cache": false,
                         "processData": false,
                         "data": JSON.stringify(newAction)
                     }
 
                     // creating new action
-                    $.ajax(settings).done(function (response) {
-                        response = JSON.parse(response.responseText.substr(1, response.length-2));
+                    $.ajax(settings).always(function (response) {
+                        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
                         if(response.id !== 0) {
                             $('#actionForm').data('formValidation').resetForm();
@@ -145,10 +151,63 @@ $(document).ready(function() {
                     console.log(err);
                 }
 
-
             // updating an existing action
             } else {
+                var fromD = $('input[name="actionFromDate"]').val();
+                var toD = $('input[name="actionToDate"]').val();
 
+                var updatedAction = {
+                    'id': promotionToUpdate.toString(),
+                    'name': $('#actionName').val(),
+                    'promotiontypeId': $('#actionType').val(),
+                    'restaurantId': resto_id,
+                    'productId': $('#actionProduct').val(),
+                    'fromDate': fromD.substr(6,4)+'-'+fromD.substr(3,2)+'-'+fromD.substr(0,2),
+                    'toDate': toD.substr(6,4)+'-'+toD.substr(3,2)+'-'+toD.substr(0,2),
+                    'description': $('#actionDescription').val(),
+                    'discountType': $('input[name="actionReductionType"]:checked').val(),
+                    'discountAmount': $('#actionReductionAmount').val(),
+                    'loyaltyPoints': $('#actionLoyaltyPoints').val()
+                };
+
+                try {
+                    var settings = {
+                        "async": true,
+                        "crossDomain": true,
+                        "url": API_URL+"promotion",
+                        "method": "PUT",
+                        "headers": {
+                            "hash": Base64.decode(Cookies.get('hash')),
+                            "Access-Control-Allow-Origin":  '*',
+                            "content-type": "application/json",
+                            "Pragma": "no-cache",
+                            "Cache-Control": "no-cache",
+                            "Expires": 0
+                        },
+                        "cache": false,
+                        "processData": false,
+                        "data": JSON.stringify(updatedAction)
+                    }
+
+                    // creating new action
+                    $.ajax(settings).always(function (response) {
+                        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+
+                        if(response.id !== 0) {
+                            $('#actionForm').data('formValidation').resetForm();
+                            $('#actionSubmit').removeClass('disabled');
+                            $('#actionSubmit').prop('disabled', false);
+                            $('#newActionModal').modal('hide');
+                            $('body').css('opacity', 1);
+
+                            setTimeout(function() {
+                                location.reload(true);
+                            }, 750);
+                        }
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
             }
 
             /*if($('#productModalSubmit').text() == "Product bewerken") {
@@ -203,7 +262,7 @@ $(document).ready(function() {
 
                 // creating new product
                 $.ajax(settings).done(function (response) {
-                    response = JSON.parse(response.responseText.substr(1, response.length-2));
+                    response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
                     if(response.id !== 0) {
                         new_product_id = response.id;
@@ -277,39 +336,22 @@ $(document).ready(function() {
     });*/
 
     initTooltips('.fa-edit', 'top', 'Actie bewerken');
-
-    /*$('.fa-edit').attr('data-toggle', 'tooltip');
-    $('.fa-edit').attr('data-placement', 'top');
-    $('.fa-edit').attr('title', 'Actie bewerken');*/
-
-
-
-    /*$('.datepicker').datepicker({
-        format: "dd/mm/yyyy",
-        weekStart: 1,
-        language: "nl-BE",
-        autoclose: true,
-        todayHighlight: true
-    });*/
-
-    /*$('#futureactions').dataTable( {
-        "paging":   false,
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Dutch.json"
-        }
-    } );*/
-
     $('[data-toggle="tooltip"]').tooltip();
 
-    setTimeout(function() {
+    /*setTimeout(function() {
         $('.panel-body').matchHeight();
-    }, 500);
+        $.fn.matchHeight._update();
+    }, 500);*/
+
+
 });
 
 $('#newActionModal').on('show.bs.modal', function(e) {
+    $('#actionForm').data('formValidation').resetForm();
     var button = $(e.relatedTarget); // Button that triggered the modal
     var title = button.data('title'); // Extract info from data-* attributes
     var actionId = button.data('id'); // Extract info from data-* attributes
+    promotionToUpdate = actionId;
 
     try {
         if(actionId.length != 0) {
@@ -357,8 +399,10 @@ function getPromotionInfo(type, restoId) {
         "url": API_URL+"restaurant/promotion/"+type+"/"+restoId+"/0/3",
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -366,8 +410,8 @@ function getPromotionInfo(type, restoId) {
         "processData": false
     }
 
-    $.ajax(settings).done(function (response) {
-        response = JSON.parse(response.substr(1, response.length - 2));
+    $.ajax(settings).always(function (response) {
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
 
         $('.'+type+'ActionsDiv tbody').empty();
         if(response.length == 0) {
@@ -385,7 +429,7 @@ function getPromotionInfo(type, restoId) {
             }
 
             if(type == 'comming') {
-                $('.'+type+'ActionsDiv tbody').append('<tr><td>'+item.name+'</td><td><span class="hidden-xs">Vanaf </span>'+end.substr(8, 2) + '/' + end.substr(5, 2) + '/' + end.substr(0, 4)+'</td><td>'+usage+'<a href="#" data-toggle="modal" data-id="'+item.id+'" data-title="Actie bewerken" data-target="#newActionModal" data-backdrop="static" title="Actie bewerken"><span class="fa fa-edit pull-right edit-action-icon"></span></a></td></tr>');
+                $('.'+type+'ActionsDiv tbody').append('<tr><td>'+item.name+'</td><td><span class="hidden-xs">Vanaf </span>'+start.substr(8, 2) + '/' + start.substr(5, 2) + '/' + start.substr(0, 4)+'</td><td>'+usage+'<a href="#" data-toggle="modal" data-id="'+item.id+'" data-title="Actie bewerken" data-target="#newActionModal" data-backdrop="static" title="Actie bewerken"><span class="fa fa-edit pull-right edit-action-icon"></span></a></td></tr>');
             } else {
                 $('.'+type+'ActionsDiv tbody').append('<tr><td>'+item.name+'</td><td><span class="hidden-xs">T.e.m. </span>'+end.substr(8, 2) + '/' + end.substr(5, 2) + '/' + end.substr(0, 4)+'</td><td>'+usage+'<a href="#" data-toggle="modal" data-id="'+item.id+'" data-title="Actie bewerken" data-target="#newActionModal" data-backdrop="static" title="Actie bewerken"><span class="fa fa-edit pull-right edit-action-icon"></span></a></td></tr>');
             }
@@ -402,8 +446,10 @@ function getActionTypes() {
         "url": API_URL+"manage/promotiontype/all/",
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -411,8 +457,8 @@ function getActionTypes() {
         "processData": false
     }
 
-    $.ajax(settings).done(function (response) {
-        response = JSON.parse(response.substr(1, response.length - 2));
+    $.ajax(settings).always(function (response) {
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
 
         $('#actionType').empty();
         $('#actionType').append('<option value=""></option>');
@@ -429,8 +475,10 @@ function getRestoProducts(restoId) {
         "url": API_URL+"restaurant/product/all/"+restoId,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -438,8 +486,8 @@ function getRestoProducts(restoId) {
         "processData": false
     }
 
-    $.ajax(settings).done(function (response) {
-        response = JSON.parse(response.substr(1, response.length - 2));
+    $.ajax(settings).always(function (response) {
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
 
         $('#actionProduct').empty();
         $('#actionProduct').append('<option value=""></option>');
@@ -458,8 +506,10 @@ function getActionInfo(aId) {
         "url": API_URL+"promotion/"+aId,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -467,8 +517,8 @@ function getActionInfo(aId) {
         "processData": false
     }
 
-    $.ajax(settings).done(function (response) {
-        response = JSON.parse(response.substr(1, response.length - 2));
+    $.ajax(settings).always(function (response) {
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
 
         var fromD = response.fromDate;
         var toD = response.toDate;
