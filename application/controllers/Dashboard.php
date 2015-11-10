@@ -236,7 +236,7 @@ class Dashboard extends CI_Controller {
     public function loyalty() {
         $data_header = array(
             'page_title' => ' - Loyalty actie',
-            'additional_styles' => ''
+            'additional_styles' => "<link rel='stylesheet' href='".public_url()."css/min/jquery.select2.min.css'>"
         );
 
         $data_content = array(
@@ -247,6 +247,7 @@ class Dashboard extends CI_Controller {
             'additional_scripts' => "<script src='".public_url()."js/min/formValidation.min.js'></script>
 <script src='".public_url()."js/min/formValidation.bootstrap.min.js'></script>
 <script src='".public_url()."js/formValidation_nl_BE.js'></script>
+<script src='".public_url()."js/min/jquery.select2.min.js'></script>
 <script src='".public_url()."js/dashboardloyalty.js'></script>"
         );
 
