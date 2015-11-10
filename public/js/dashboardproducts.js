@@ -1,7 +1,5 @@
 //TODO: fix photo upload
 //TODO: Ajax somewhere reloads all products after a change => duplicate products.
-//TODO: Fix filter result, the images aren't shown correctly. use thumbail link, it's available :)
-
 //TODO: IMPORTANT - Split into functions to make more readable so bug finding goes faster :)
 $(document).ready(function () {
     getProducts();
@@ -138,7 +136,7 @@ $(document).ready(function () {
 
                 // creating new product
                 $.ajax(settings).always(function (response) {
-                    response = JSON.parse(response.responseText.substr(1, response.length-2));
+                    response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
                     if(response.id !== 0) {
                         new_product_id = response.id;
@@ -190,8 +188,6 @@ $(document).ready(function () {
     });
 });
 
-
-
 function getProducts() {
     $('#resto_products').html("");
     var settings = {
@@ -213,7 +209,6 @@ function getProducts() {
     };
 
     $.ajax(settings).always(function (response) {
-        console.log(response.status);
         if(response.status != 401) {
             response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
         } else {
@@ -350,7 +345,6 @@ function setProductCategories() {
     $.each(prodCategoryIds, function(index,item) {
         $('#ProductType').append('<option value="'+prodCategoryIds[index]+'">'+prodCategories[index]+'</option>');
     });
-    console.log('set');
 }
 
 function photoUpload(prodId) {
@@ -879,8 +873,8 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
         };
 
         $.ajax(settings).always(function (msg) {
+            msg = JSON.parse(msg.responseText.substr(1, msg.responseText.length-2));
             product = msg;
-            //console.log(product);
 
             var select_to_add = $('#ProductRelatedProducts');
 
@@ -1075,7 +1069,7 @@ function searchProducts(searchTerm) {
             $('#no_products_msg').addClass('hidden');
             $.each(response.products, function(index,item) {
                 if(item.photo != null) {
-                    product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="'+API_URL.substr(0, API_URL.length-4)+'api/files/'+item.photo+'"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
+                    product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="'+item.photo.thumbnailUrl+'"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
                 } else {
                     product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="http://lorempixel.com/600/480/food/"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
                 }
@@ -1124,7 +1118,7 @@ function searchProductsCategory(searchTerm) {
             $('#no_products_msg').addClass('hidden');
             $.each(response.products, function(index,item) {
                 if(item.photo != null) {
-                    product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="'+API_URL.substr(0, API_URL.length-4)+'api/files/'+item.photo+'"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
+                    product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="'+item.photo.thumbnailUrl+'"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
                 } else {
                     product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="http://lorempixel.com/600/480/food/"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
                 }
@@ -1161,7 +1155,7 @@ function searchCombined(searchProd, searchCat) {
     };
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         //console.log(response);
         product_html = '';
@@ -1172,7 +1166,7 @@ function searchCombined(searchProd, searchCat) {
             $('#no_products_msg').addClass('hidden');
             $.each(response.products, function(index,item) {
                 if(item.photo != null) {
-                    product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="'+API_URL.substr(0, API_URL.length-4)+'api/files/'+item.photo+'"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
+                    product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="'+item.photo.thumbnailUrl+'"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
                 } else {
                     product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+item.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="http://lorempixel.com/600/480/food/"><div class="caption"><h3 id="thumbnail-label">'+item.name+'</h3></div></div></div></a>';
                 }
@@ -1191,8 +1185,7 @@ function searchCombined(searchProd, searchCat) {
     });
 }
 
-function getHashFromCookie()
-{
+function getHashFromCookie() {
     return Base64.decode(Cookies.get("hash"));
 }
 
