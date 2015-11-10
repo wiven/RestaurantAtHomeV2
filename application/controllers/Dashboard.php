@@ -196,7 +196,8 @@ class Dashboard extends CI_Controller {
             'page_title' => ' - Acties',
             'additional_styles' => "<link rel='stylesheet' href='".public_url()."css/min/bootstrap_datepicker.min.css'>
             <link rel='stylesheet' href='".public_url()."css/min/jquery.select2.min.css'>
-            <link rel='stylesheet' href='".public_url()."css/min/formValidation.min.css'>"
+            <link rel='stylesheet' href='".public_url()."css/min/formValidation.min.css'>
+            <link rel='stylesheet' href='".public_url()."css/sweetalert.css'>"
         );
 
         $data_content = array(
@@ -207,6 +208,7 @@ class Dashboard extends CI_Controller {
             'additional_scripts' => "<script src='".public_url()."js/min/bootstrap-datepicker.min.js'></script>
             <script src='".public_url()."js/min/bootstrap-datepicker.nl-BE.min.js'></script>
             <script src='".public_url()."js/min/jquery.select2.min.js'></script>
+            <script src='".public_url()."js/sweetalert.js'></script>
             <script src='".public_url()."js/jquery.dataTables.js'></script>
             <script src='".public_url()."js/min/formValidation.min.js'></script>
             <script src='".public_url()."js/min/formValidation.bootstrap.min.js'></script>

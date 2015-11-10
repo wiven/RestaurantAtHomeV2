@@ -259,7 +259,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                             <div class="col-sm-4">
                                 <div class="form-group has-feedback clearfix">
-                                    <span class="glyphicon glyphicon-calendar form-control-feedback" aria-hidden="true"></span>
+<!--                                    <span class="glyphicon glyphicon-calendar form-control-feedback" aria-hidden="true"></span>-->
                                     <input type="text" id="action_start_date" type="text" name="actionFromDate" class="form-control datepicker" placeholder="DD/MM/JJJJ">
                                 </div>
                             </div>
@@ -272,7 +272,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                             <div class="col-sm-4">
                                 <div class="form-group has-feedback clearfix">
-                                    <span class="glyphicon glyphicon-calendar form-control-feedback" aria-hidden="true"></span>
+<!--                                    <span class="glyphicon glyphicon-calendar form-control-feedback" aria-hidden="true"></span>-->
                                     <input type="text" id="action_end_date" type="text" name="actionToDate" class="form-control datepicker" placeholder="DD/MM/JJJJ">
                                 </div>
                             </div>
@@ -431,13 +431,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
             <div class="modal-footer">
                 <div class="form-group">
-                    <div class="col-sm-2">
-                        <button class="btn btn-sm btn-danger pull-left" title="Actie verwijderen" id="ActionDelete">
+                    <div class="col-sm-12">
+                        <p class="help-block"><span style="color: #a94442; font-weight: bold;">&ast;</span> Verplicht in te vullen</p>
+                        <button class="btn btn-sm btn-danger pull-left hidden" title="Actie verwijderen" id="ActionDelete">
                             <span class="fa fa-trash-o fa-2x fa-fw"></span>
                         </button>
-                    </div>
-                    <div class="col-sm-10">
-                        <p class="help-block"><span style="color: #a94442; font-weight: bold;">&ast;</span> Verplicht in te vullen</p>
                         <button type="cancel" class="btn btn-default" data-dismiss="modal">Annuleren</button>
                         <button type="submit" class="btn btn-primary btn-lg" id="actionSubmit">Actie aanmaken</button>
                     </div>

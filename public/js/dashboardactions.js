@@ -352,9 +352,11 @@ $('#newActionModal').on('show.bs.modal', function(e) {
     var title = button.data('title'); // Extract info from data-* attributes
     var actionId = button.data('id'); // Extract info from data-* attributes
     promotionToUpdate = actionId;
+    $('#ActionDelete').addClass('hidden');
 
     try {
         if(actionId.length != 0) {
+            $('#ActionDelete').removeClass('hidden');
             getActionInfo(actionId);
         }
     } catch(err) {
@@ -522,7 +524,7 @@ function getActionInfo(aId) {
 
         var fromD = response.fromDate;
         var toD = response.toDate;
-        console.log(response);
+        //console.log(response);
 
         $('#actionName').val(response.name);
         $('#actionType').val(response.promotiontypeId);
@@ -550,4 +552,97 @@ $('#actionSubmit').off().on('click', function(evt) {
     $(this).prop('disabled', true);
     //console.log($('#actionSubmit').val());
     $('#actionForm').submit();
+});
+
+$('#ActionDelete').off().on('click', function() {
+    swal({
+            title: "Bent u zeker dat u deze actie wil verwijderen?",
+            text: "Let op: dit is onomkeerbaar!",
+            cancelButtonText: "Annuleren",
+            type: "warning",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        },
+        function(){
+            $('body').css('opacity', 0.5);
+            $('#actionSubmit').addClass('disabled');
+            $('#actionSubmit').prop('disabled', true);
+
+            setTimeout(function(){
+                try {
+                    var settings = {
+                        "async": true,
+                        "crossDomain": true,
+                        "url": API_URL+"promotion/delete/"+promotionToUpdate,
+                        "method": "GET",
+                        "headers": {
+                            "hash": Base64.decode(Cookies.get('hash')),
+                            "Access-Control-Allow-Origin":  '*',
+                            "content-type": "application/json",
+                            "Pragma": "no-cache",
+                            "Cache-Control": "no-cache",
+                            "Expires": 0
+                        },
+                        "cache": false,
+                        "processData": false
+                    }
+
+                    // deleting the action
+                    $.ajax(settings).always(function (response) {
+                        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+
+                        $('#actionForm').data('formValidation').resetForm();
+                        $('#actionSubmit').removeClass('disabled');
+                        $('#actionSubmit').prop('disabled', false);
+                        $('#newActionModal').modal('hide');
+                        $('body').css('opacity', 1);
+
+                        swal("Actie werd verwijderd!");
+
+                        setTimeout(function() {
+                            location.reload(true);
+                        }, 750);
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
+            }, 500);
+        });
+
+    /*try {
+        var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": API_URL+"promotion/delete/"+promotionToUpdate,
+            "method": "GET",
+            "headers": {
+                "hash": Base64.decode(Cookies.get('hash')),
+                "Access-Control-Allow-Origin":  '*',
+                "content-type": "application/json",
+                "Pragma": "no-cache",
+                "Cache-Control": "no-cache",
+                "Expires": 0
+            },
+            "cache": false,
+            "processData": false
+        }
+
+        // deleting the action
+        $.ajax(settings).always(function (response) {
+            response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+
+            $('#actionForm').data('formValidation').resetForm();
+            $('#actionSubmit').removeClass('disabled');
+            $('#actionSubmit').prop('disabled', false);
+            $('#newActionModal').modal('hide');
+            $('body').css('opacity', 1);
+
+            setTimeout(function() {
+                location.reload(true);
+            }, 750);
+        });
+    } catch (err) {
+        console.log(err);
+    }*/
 });
