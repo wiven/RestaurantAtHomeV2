@@ -1,5 +1,5 @@
 var orders_html = '', prodName = '', clientName = '', cAddress = '';
-var resto_id = 5;
+var resto_id = Base64.decode(Cookies.get('restoId'));
 var orderId = 0;
 //const API_URL = 'http://localhost/RestaurantAtHomeAPI/';
 const API_URL = 'http://syst.restaurantathome.be/api/';
@@ -51,8 +51,10 @@ function getOrderCount() {
         "url": API_URL+"dashboard/orders/"+resto_id,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -61,7 +63,7 @@ function getOrderCount() {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         console.log(response);
         // count and handle new orders
@@ -111,8 +113,10 @@ function getOrders(type, restoId, skip, top, resultDiv) {
         "url": API_URL+"restaurant/order/"+type+"/"+restoId+"/"+skip+"/"+top,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -121,7 +125,7 @@ function getOrders(type, restoId, skip, top, resultDiv) {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         var orderCount = 0;
 
@@ -162,8 +166,10 @@ function getOrderInfo(ordId, cName) {
         "url": API_URL+"order/"+ordId,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -226,8 +232,10 @@ function getProductName(prodId) {
         "url": API_URL+"product/"+prodId,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -236,7 +244,7 @@ function getProductName(prodId) {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
         prodName = response.name;
     });
@@ -249,8 +257,10 @@ function getFullAddress(addressId) {
         "url": API_URL+"user/address/"+addressId,
         "method": "GET",
         "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
-            "Pragma": "no-cache" ,
+            "Pragma": "no-cache",
             "Cache-Control": "no-cache",
             "Expires": 0
         },
@@ -259,7 +269,7 @@ function getFullAddress(addressId) {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.length-2));
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
         if(response[0].addition.length != 0) {
             cAddress = response[0].street+' '+response[0].number+'/'+response[0].addition+', '+response[0].postcode+' '+response[0].city;
         } else {

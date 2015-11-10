@@ -1,5 +1,5 @@
 var orders_html = '', prodName = '', clientName = '', cAddress = '';
-var resto_id = 5;
+var resto_id = Base64.decode(Cookies.get('restoId'));
 var orderId = 0;
 //const API_URL = 'http://localhost/RestaurantAtHomeAPI/';
 const API_URL = 'http://syst.restaurantathome.be/api/';
@@ -96,7 +96,7 @@ $('#set_today_active_btn').on('click', function() {
 
         // creating new action
         $.ajax(settings).always(function (response) {
-            response = JSON.parse(response.responseText.substr(1, response.length-2));
+            response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
             $('#slotsDiv').empty();
 
@@ -132,14 +132,20 @@ function setSlotZero(slotId, dte) {
             "url": API_URL+"slots/change",
             "method": "POST",
             "headers": {
-                "content-type": "application/json"
+                "hash": Base64.decode(Cookies.get('hash')),
+                "Access-Control-Allow-Origin":  '*',
+                "content-type": "application/json",
+                "Pragma": "no-cache",
+                "Cache-Control": "no-cache",
+                "Expires": 0
             },
+            "cache": false,
             "processData": false,
             "data": JSON.stringify(updateSlot)
         }
 
         $.ajax(settings).always(function (response) {
-            response = JSON.parse(response.responseText.substr(1, response.length-2));
+            response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
         });
     } catch (err) {
         console.log(err);
@@ -157,8 +163,10 @@ $('#slotDate').off().on('changeDate', function() {
             "url": API_URL+"restaurant/slots/overview/"+resto_id+"/"+date,
             "method": "GET",
             "headers": {
+                "hash": Base64.decode(Cookies.get('hash')),
+                "Access-Control-Allow-Origin":  '*',
                 "content-type": "application/json",
-                "Pragma": "no-cache" ,
+                "Pragma": "no-cache",
                 "Cache-Control": "no-cache",
                 "Expires": 0
             },
@@ -167,7 +175,7 @@ $('#slotDate').off().on('changeDate', function() {
         }
 
         $.ajax(settings).always(function (response) {
-            response = JSON.parse(response.responseText.substr(1, response.length-2));
+            response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
             if(response.length !== 0) {
                 var d = new Date(val.substr(6,4)+'/'+val.substr(3,2)+'/'+val.substr(0,2));
