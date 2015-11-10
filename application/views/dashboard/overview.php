@@ -10,7 +10,7 @@
 		<div class="col-lg-12 hidden" id="new_order_box">
 			<div class="panel panel-default">
 				<div class="panel-heading pending-orders">
-                    <a href="/dashboard/orders/new" id="new_orders_msg">
+                    <a href="/dashboard/orders" id="new_orders_msg">
                         <h4>U heeft <span id="new_order_count">0</span> nieuwe bestelling<span id="multiple_orders">en</span></h4>
                     </a>
 				</div>

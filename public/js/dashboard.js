@@ -65,3 +65,8 @@ function initTooltips(element, position, title) {
     div.attr('data-placement', position);
     div.attr('title', title);
 }
+
+$('#contactLink').on('click', function(e) {
+    e.preventDefault();
+    $('#us_report_button').trigger('click');
+});
