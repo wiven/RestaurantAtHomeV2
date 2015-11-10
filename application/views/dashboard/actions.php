@@ -278,10 +278,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                         </div>
 
-                        <!--<div class="input-group date">
-                            <input type="text" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-                        </div>-->
-
                         <div class="form-group has-feedback">
                             <label class="col-sm-2 control-label" style="text-align: left;" for="actionReductionType">Type korting
                                 <span class="glyphicon glyphicon-asterisk form-control-feedback" aria-hidden="true" style="color: #a94442; right: 0;"></span>
@@ -435,7 +431,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
             <div class="modal-footer">
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
+                    <div class="col-sm-2">
+                        <button class="btn btn-sm btn-danger pull-left" title="Actie verwijderen" id="ActionDelete">
+                            <span class="fa fa-trash-o fa-2x fa-fw"></span>
+                        </button>
+                    </div>
+                    <div class="col-sm-10">
                         <p class="help-block"><span style="color: #a94442; font-weight: bold;">&ast;</span> Verplicht in te vullen</p>
                         <button type="cancel" class="btn btn-default" data-dismiss="modal">Annuleren</button>
                         <button type="submit" class="btn btn-primary btn-lg" id="actionSubmit">Actie aanmaken</button>
