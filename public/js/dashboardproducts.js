@@ -1,3 +1,8 @@
+//TODO: fix photo upload
+//TODO: Ajax somewhere reloads all products after a change => duplicate products.
+//TODO: Fix filter result, the images aren't shown correctly. use thumbail link, it's available :)
+
+//TODO: IMPORTANT - Split into functions to make more readable so bug finding goes faster :)
 $(document).ready(function () {
     getProducts();
     getProductCategories();
@@ -82,7 +87,7 @@ $(document).ready(function () {
 
             if($('#productModalSubmit').text() == "Product bewerken") {
                 // update existing product
-                var editedProduct = Array();
+                var editedProduct = [];
 
                 editedProduct["producttypeId"] = $('#ProductType').children(':selected').attr('value');
                 editedProduct["promotionId"] = prodPromoId;
@@ -123,13 +128,13 @@ $(document).ready(function () {
                     "crossDomain": true,
                     "url": API_URL+"product",
                     "method": "POST",
-                    "hash": base64.decode(Cookies.get("hash")),
                     "headers": {
-                        "content-type": "application/json"
+                        "content-type": "application/json",
+                        "hash": getHashFromCookie
                     },
                     "processData": false,
                     "data": JSON.stringify(_product)
-                }
+                };
 
                 // creating new product
                 $.ajax(settings).always(function (response) {
@@ -188,6 +193,7 @@ $(document).ready(function () {
 
 
 function getProducts() {
+    $('#resto_products').html("");
     var settings = {
         "async": true,
         "crossDomain": true,
@@ -195,7 +201,7 @@ function getProducts() {
         //url: API_URL + 'restaurant/product/all/' + resto_id,
         "method": "GET",
         "headers": {
-            "hash": Base64.decode(Cookies.get('hash')),
+            "hash": getHashFromCookie(),
             "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
             "Pragma": "no-cache",
@@ -258,7 +264,7 @@ function getProducts() {
             withCredentials: true
         },
         "headers": {
-            "hash": Base64.decode(Cookies.get('hash')),
+            "hash": getHashFromCookie(),
             "Access-Control-Allow-Origin":  '*',
             "Pragma": "no-cache",
             "Cache-Control": "no-cache",
@@ -280,7 +286,7 @@ function getProductCategories() {
         "url": API_URL+"manage/producttype/all/",
         "method": "GET",
         "headers": {
-            "hash": Base64.decode(Cookies.get('hash')),
+            "hash": getHashFromCookie(),
             "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
             "Pragma": "no-cache",
@@ -347,7 +353,7 @@ function setProductCategories() {
     console.log('set');
 }
 
-/*function photoUpload(prodId) {
+function photoUpload(prodId) {
     console.log('photoUpload');
     // handle file upload for photo picture
     'use strict';
@@ -358,6 +364,9 @@ function setProductCategories() {
     $('#fileupload').fileupload({
         url: url,
         dataType: 'json',
+        headers: {
+            "hash" : getHashFromCookie
+        },
         done: function (e, data) {
             $.each(data.result.files, function (index, file) {
                 //$('<p/>').text(file.name).appendTo('#files');
@@ -387,7 +396,7 @@ function setProductCategories() {
         }
     }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
-}*/
+}
 
 function updatedProductPhotoUpload() {
     'use strict';
@@ -399,7 +408,7 @@ function updatedProductPhotoUpload() {
             $.each(data.result.files, function (index, file) { });
         },
         headers:{
-            "hash": Base64.decode(Cookies.get('hash'))
+            "hash": getHashFromCookie()
         },
         progressall: function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -426,7 +435,7 @@ function productPhotoUpload() {
             $.each(data.result.files, function (index, file) { });
         },
         headers:{
-            "hash": Base64.decode(Cookies.get('hash'))
+            "hash": getHashFromCookie()
         },
         progressall: function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -449,7 +458,7 @@ function deleteProduct(prodId) {
         dataType: "jsonp",
         crossDomain: true,
         headers:{
-            "hash": Base64.decode(Cookies.get('hash'))
+            "hash": getHashFromCookie()
         },
         xhrFields: {
             withCredentials: true
@@ -487,7 +496,7 @@ function updateProduct(values, restoId, prodId) {
         "method": "PUT",
         "headers": {
             "content-type": "application/json",
-            "hash": Base64.decode(Cookies.get('hash'))
+            "hash": getHashFromCookie()
         },
         cache: false,
         "processData": false,
@@ -507,7 +516,7 @@ function relateProducts(newProdId, relatedProd) {
         "method": "POST",
         "headers": {
             "content-type": "application/json",
-            "hash": Base64.decode(Cookies.get('hash'))
+            "hash": getHashFromCookie()
         },
         "processData": false
     };
@@ -603,7 +612,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
             url: API_URL  + 'product/' + product_id,
             "method": "GET",
             "headers": {
-                "hash": Base64.decode(Cookies.get('hash')),
+                "hash": getHashFromCookie(),
                 "Access-Control-Allow-Origin":  '*',
                 "content-type": "application/json",
                 "Pragma": "no-cache",
@@ -686,13 +695,13 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
 
 
 
-        var settings = {
+        settings = {
             "async": true,
             "crossDomain": true,
             url: API_URL  + 'restaurant/product/all/' + resto_id,
             "method": "GET",
             "headers": {
-                "hash": Base64.decode(Cookies.get('hash')),
+                "hash": getHashFromCookie(),
                 "Access-Control-Allow-Origin":  '*',
                 "content-type": "application/json",
                 "Pragma": "no-cache",
@@ -720,22 +729,37 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
             select_to_add.empty();
             select_to_add.append('<option value=""></option>');
 
-            $.each(msg, function(index, item) {
+            $.each(response, function(index, item) {
                 select_to_add.append($('<option></option>').val(item.id).html(item.name));
             });
 
             // getting info about existing product links
-            $.ajax({
-                method: "GET",
+            settings = {
+                "async": true,
+                "crossDomain": true,
                 url: API_URL  + 'product/related/' + product_id,
-                dataType: "jsonp",
-                crossDomain: true,
-                xhrFields: {
-                    withCredentials: true
-                }
-            }).always(function (msg) {
-                product = msg;
+                "method": "GET",
+                "headers": {
+                    "hash": getHashFromCookie(),
+                    "Access-Control-Allow-Origin":  '*',
+                    "content-type": "application/json",
+                    "Pragma": "no-cache",
+                    "Cache-Control": "no-cache",
+                    "Expires": 0
+                },
+                "cache": false,
+                "processData": false
+            };
 
+            //TODO: fix showing related products.
+            $.ajax(settings).always(function (response) {
+                if(response.status != 401) {
+                    response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+                } else {
+                    return;
+                }
+                product = response;
+                console.log(product);
                 /*var select_to_add = $('#ProductRelatedProducts');
 
                  select_to_add.empty();
@@ -743,7 +767,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
 
                 var relatedProducts = [];
 
-                $.each(msg, function(index, item) {
+                $.each(response, function(index, item) {
                     relatedProducts.push(item.id);
                     //$('#ProductRelatedProducts').val(item.id);
                     $('#ProductRelatedProducts').val(relatedProducts);
@@ -751,9 +775,10 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
                 });
 
                 $('#ProductRelatedProducts').trigger('chosen:updated');
-            }).fail(function (jqXHR, textStatus) {
-                alert("Request failed: " + textStatus);
             });
+            //.fail(function (jqXHR, textStatus) {
+            //    alert("Request failed: " + textStatus);
+            //});
 
             select_to_add.trigger('chosen:updated');
         });
@@ -773,7 +798,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
                 withCredentials: true
             },
             "headers": {
-                "hash": Base64.decode(Cookies.get('hash')),
+                "hash": getHashFromCookie(),
                 "Access-Control-Allow-Origin":  '*',
                 "content-type": "application/json",
                 "Pragma": "no-cache",
@@ -836,23 +861,24 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
         $('#PhotoBtn').hide();
         $('#ProductPhoto').parent().parent().addClass('hidden');
 
-        $.ajax({
-            method: "GET",
+        var settings = {
+            "async": true,
+            "crossDomain": true,
             url: API_URL  + 'restaurant/product/all/' + resto_id,
-            dataType: "jsonp",
-            crossDomain: true,
-            xhrFields: {
-                withCredentials: true
-            },
+            "method": "GET",
             "headers": {
-                "hash": Base64.decode(Cookies.get('hash')),
+                "hash": getHashFromCookie(),
                 "Access-Control-Allow-Origin":  '*',
                 "content-type": "application/json",
                 "Pragma": "no-cache",
                 "Cache-Control": "no-cache",
                 "Expires": 0
-            }
-        }).always(function (msg) {
+            },
+            "cache": false,
+            "processData": false
+        };
+
+        $.ajax(settings).always(function (msg) {
             product = msg;
             //console.log(product);
 
@@ -866,9 +892,10 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
             });
 
             select_to_add.trigger('chosen:updated');
-        }).fail(function (jqXHR, textStatus) {
-            alert("Request failed: " + textStatus);
         });
+    //.fail(function (jqXHR, textStatus) {
+    //        alert("Request failed: " + textStatus);
+    //    });
 
         $('#ProductName').val('');
         $('#ProductType').val('');
@@ -1025,7 +1052,7 @@ function searchProducts(searchTerm) {
         "url": API_URL+"dashboard/products/"+resto_id+"/0/12/1001=" + searchTerm,
         "method": "GET",
         "headers": {
-            "hash": Base64.decode(Cookies.get('hash')),
+            "hash": getHashFromCookie(),
             "Access-Control-Allow-Origin":  '*',
             "content-type": "application/json",
             "Pragma": "no-cache",
@@ -1075,7 +1102,7 @@ function searchProductsCategory(searchTerm) {
         "url": API_URL+"dashboard/products/"+resto_id+"/0/12/1005=" + searchTerm,
         "method": "GET",
         "headers": {
-            "hash": Base64.decode(Cookies.get('hash')),
+            "hash": getHashFromCookie(),
             "content-type": "application/json",
             "Pragma": "no-cache" ,
             "Cache-Control": "no-cache",
@@ -1123,7 +1150,7 @@ function searchCombined(searchProd, searchCat) {
         "url": API_URL+"dashboard/products/"+resto_id+"/0/12/1001="+searchProd+"&1005=" + searchCat,
         "method": "GET",
         "headers": {
-            "hash": Base64.decode(Cookies.get('hash')),
+            "hash": getHashFromCookie(),
             "content-type": "application/json",
             "Pragma": "no-cache" ,
             "Cache-Control": "no-cache",
@@ -1164,11 +1191,20 @@ function searchCombined(searchProd, searchCat) {
     });
 }
 
+function getHashFromCookie()
+{
+    return Base64.decode(Cookies.get("hash"));
+}
+
 $('#productModalSubmit').on('click', function(evt) {
     evt.preventDefault();
 
     console.log($(this).val());
 });
+
+
+
+
 
 //Not used anymore
 
@@ -1179,7 +1215,7 @@ $('#productModalSubmit').on('click', function(evt) {
 //        dataType: "jsonp",
 //        crossDomain: true,
 //        headers: {
-//            "hash": Base64.decode(Cookies.get('hash'))
+//            "hash": getHashFromCookie()
 //        },
 //        xhrFields: {
 //            withCredentials: true
