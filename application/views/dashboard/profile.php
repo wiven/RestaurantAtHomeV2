@@ -303,12 +303,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div class="modal fade" id="editContactModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="row" id="contactModalLoaderDiv" style="margin: 80px;">
+                <span class="fa fa-spinner fa-spin fa-5x fa-fw" style="width: 100%; z-index: 9999;"></span>
+            </div>
+            <div class="modal-header hidden">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title" id="myModalLabel">Contactgegevens bewerken</h4>
             </div>
-            <div class="modal-body text-justify">
+            <div class="modal-body text-justify hidden">
                 <div class="col-lg-12">
                     <form class="form-horizontal" id="contactInfoForm">
                         <div class="form-group has-feedback">
@@ -394,7 +397,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
             </div>
 
-            <div class="modal-footer">
+            <div class="modal-footer hidden">
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <p class="help-block"><span style="color: #a94442; font-weight: bold;">&ast;</span> Verplicht in te vullen</p>
