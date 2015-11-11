@@ -22,6 +22,8 @@ $(document).ready(function () {
         evt.preventDefault();
         console.log($(this).attr('data-id'));
         setSlotZero($(this).attr('data-id'), $('#slotDate').val());
+        var dt = $('#slotDate').val();
+        setSlotZero($(this).attr('data-id'), dt.substr(6,4)+'-'+dt.substr(3,2)+'-'+dt.substr(0,2));
     });
 
     $('#slotForm').formValidation({
@@ -125,6 +127,8 @@ function setSlotZero(slotId, dte) {
         'quantity': 0
     };
 
+    console.log(JSON.stringify(updateSlot));
+
     try {
         var settings = {
             "async": true,
@@ -146,6 +150,7 @@ function setSlotZero(slotId, dte) {
 
         $.ajax(settings).always(function (response) {
             response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+            console.log(response);
         });
     } catch (err) {
         console.log(err);
@@ -190,7 +195,7 @@ $('#slotDate').off().on('changeDate', function() {
 
                 $('.btn_slot_zero').on('click', function (evt) {
                     evt.preventDefault();
-                    setSlotZero($(this).attr('data-id'), val.substr(6,4)+'/'+val.substr(3,2)+'/'+val.substr(0,2));
+                    setSlotZero($(this).attr('data-id'), val.substr(6,4)+'-'+val.substr(3,2)+'-'+val.substr(0,2));
                     $(this).parent().parent().find('#slotAmount').val(0);
                 });
 

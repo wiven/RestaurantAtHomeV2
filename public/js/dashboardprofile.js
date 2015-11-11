@@ -1541,7 +1541,7 @@ function updateOpeningHours(recordId, weekDay, from, to, checkOpen) {
         "open": checkOpen
     };
 
-    //console.log(JSON.stringify(hour));
+    console.log(JSON.stringify(hour));
 
     var settings = {
         "async": true,
