@@ -1561,9 +1561,7 @@ function updateOpeningHours(recordId, weekDay, from, to, checkOpen) {
         "data": JSON.stringify(hour)
     }
 
-    $.ajax(settings).always(function (response) {
-        console.log('ok');
-    });
+    $.ajax(settings).always(function (response) { });
 }
 
 function logoUpload() {
