@@ -2,8 +2,7 @@ var orders_html = '', prodName = '', clientName = '', cAddress = '';
 var orderUserId = 0;
 var resto_id = Base64.decode(Cookies.get('restoId'));
 var orderId = 0;
-//const API_URL = 'http://localhost/RestaurantAtHomeAPI/';
-const API_URL = 'http://syst.restaurantathome.be/api/';
+const API_URL = location.href.split('/')[0]+'//'+location.href.split('/')[2]+'/api/';
 var productTypes, submitBtn = '', temp = '';
 var relatedProducts = Array(), prodCategories = Array(), prodCategoryIds = Array();
 
@@ -12,8 +11,7 @@ $(document).ready(function () {
 });
 
 $('#orderInfoModal').off().on('show.bs.modal', function(e) {
-    console.log('order info');
-    console.log(orderId);
+    modalLoading();
     getOrderInfo(orderId, clientName);
     var button = $(e.relatedTarget); // Button that triggered the modal
     var title = button.data('title'); // Extract info from data-* attributes
@@ -21,21 +19,14 @@ $('#orderInfoModal').off().on('show.bs.modal', function(e) {
     // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
     var modal = $(this);
     modal.find('.modal-title').text(title);
-    //modal.find('.modal-body input').val(title);
+
+    setTimeout(function() {
+        modalLoaded();
+    }, 500);
 });
 
 initTooltips('.fa-edit', 'top', 'Actie bewerken');
-$('[data-toggle="tooltip"]').tooltip()
-
-$('#orderInfoModal').on('show.bs.modal', function(e) {
-    /*var button = $(e.relatedTarget); // Button that triggered the modal
-     var title = button.data('title'); // Extract info from data-* attributes*/
-    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-    var modal = $(this);
-    modal.find('.modal-title').text('Orderinfo');
-    //modal.find('.modal-body input').val(title);
-});
+$('[data-toggle="tooltip"]').tooltip();
 
 function initTooltips(element, position, title) {
     var div = $(element);
@@ -61,15 +52,15 @@ function getOrderCount() {
         },
         "cache": false,
         "processData": false
-    }
+    };
 
     $.ajax(settings).always(function (response) {
         response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
-        console.log(response);
+        //console.log(response);
         // count and handle new orders
         if(response.new.length != 0) {
-            $('.newOrdersDiv .panel-body').html('');
+            //$('.newOrdersDiv .panel-body').html('');
             orders_html = '';
             getOrders('new', resto_id, 0, 5, '.newOrdersDiv');
         } else {
@@ -78,7 +69,7 @@ function getOrderCount() {
 
         // count and handle inprogress orders
         if(response.inProgress.length != 0) {
-            $('.newOrdersDiv .panel-body').html('');
+            //$('.newOrdersDiv .panel-body').html('');
             orders_html = '';
             getOrders('inprogress', resto_id, 0, 5, '.inprogressOrdersDiv');
         } else {
@@ -87,7 +78,7 @@ function getOrderCount() {
 
         // count and handle ready orders
         if(response.ready.length != 0) {
-            $('.newOrdersDiv .panel-body').html('');
+            //$('.newOrdersDiv .panel-body').html('');
             orders_html = '';
             getOrders('ready', resto_id, 0, 5, '.readyOrdersDiv');
         } else {
@@ -96,7 +87,7 @@ function getOrderCount() {
 
         // count and handle finished orders
         if(response.finished.length != 0) {
-            $('.newOrdersDiv .panel-body').html('');
+            //$('.newOrdersDiv .panel-body').html('');
             orders_html = '';
             getOrders('finished', resto_id, 0, 5, '.finishedOrdersDiv');
         } else {
@@ -123,7 +114,7 @@ function getOrders(type, restoId, skip, top, resultDiv) {
         },
         "cache": false,
         "processData": false
-    }
+    };
 
     $.ajax(settings).always(function (response) {
         response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
@@ -176,12 +167,12 @@ function getOrderInfo(ordId, cName) {
         },
         "cache": false,
         "processData": false
-    }
+    };
 
     $.ajax(settings).always(function (response) {
         response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
 
-        console.log(response);
+        //console.log(response);
         getFullAddress(response.addressId);
         getPaymentMethod(response.paymentmethodid);
 
@@ -229,40 +220,60 @@ function getOrderInfo(ordId, cName) {
             }, 500);
         });
 
-        /*console.log(response.lines[0]);
-        getProductName(response.lines[0].productId);*/
-
-        /*setTimeout(function() {
-            console.log(prodName);
-        }, 500);*/
+        switch(response.orderStatusId) {
+            case 10:
+                $('#nextStatusBtn').html(
+                    '<a href="#" class="btn btn-default btn-block orderMarkBusy">'+
+                        'Markeer als in verwerking'+
+                    '</a>');
+                $('#nextStatusBtn').removeClass('hidden');
+                $('#readyStatusBtn').removeClass('hidden');
+                $('#readyStatusBtn').addClass('col-lg-6');
+                $('#readyStatusBtn').addClass('col-md-6');
+                break;
+            case 20:
+                $('#nextStatusBtn').html(
+                    '<a href="#" class="btn btn-warning btn-block orderMarkReady">'+
+                        'Markeer als af te leveren'+
+                    '</a>');
+                $('#nextStatusBtn').removeClass('hidden');
+                $('#readyStatusBtn').removeClass('hidden');
+                $('#readyStatusBtn').addClass('col-lg-6');
+                $('#readyStatusBtn').addClass('col-md-6');
+                break;
+            case 40:
+                $('#nextStatusBtn').addClass('hidden');
+                $('#readyStatusBtn').removeClass('hidden');
+                $('#readyStatusBtn').removeClass('col-lg-6');
+                $('#readyStatusBtn').removeClass('col-md-6');
+                break;
+            case 100:
+                $('#nextStatusBtn').addClass('hidden');
+                $('#readyStatusBtn').addClass('hidden');
+                break;
+            default: break;
+        }
 
         $('#orderTotalAmount').html(response.amount);
-        $('.orderMarkBusy').off().on('click', function() { changeOrderState(response, 'busy'); });
-        $('.orderMarkReady').off().on('click', function() { changeOrderState(ordId, 'ready'); });
+        $('.orderMarkBusy').off().on('click', function() { changeOrderState(orderId, 20); });
+        $('.orderMarkReady').off().on('click', function() { changeOrderState(orderId, 40); });
+        $('.orderMarkFinished').off().on('click', function() { changeOrderState(orderId, 100); });
     });
 }
 
-function changeOrderState(order, statusCode) {
+function changeOrderState(ordId, statusCode) {
     var updatedOrder = {
-        'id': order.id,
-        'userId': order.userId,
-        'restaurantId': order.restaurantId,
-        'orderStatusId': statusCode,
-        'amount': order.amount,
-        'orderDateTime': order.orderDateTime,
-        'comment': order.comment,
-        'addressId': order.addressId,
-        'couponId': order.couponId,
-        'creationDateTime': order.creationDateTime
+        'id': ordId,
+        'orderStatusId': statusCode
     };
 
     console.log(updatedOrder);
 
-    /*var settings = {
+    var settings = {
         "async": true,
         "crossDomain": true,
-        "url": API_URL+"manage/paymentmethod/"+pmId,
-        "method": "GET",
+        "url": API_URL+"restaurant/order/"+resto_id,
+        "method": "PUT",
         "headers": {
             "hash": Base64.decode(Cookies.get('hash')),
             "Access-Control-Allow-Origin":  '*',
@@ -277,9 +288,9 @@ function changeOrderState(order, statusCode) {
     }
 
     $.ajax(settings).always(function (response) {
-        response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
-        $('#orderPaymentMethod').html(response.name);
-    });*/
+        getOrderCount();
+        setTimeout(function() { $('#orderInfoModal').modal('hide'); }, 250);
+    });
 }
 
 function getPaymentMethod(pmId) {
@@ -298,38 +309,13 @@ function getPaymentMethod(pmId) {
         },
         "cache": false,
         "processData": false
-    }
+    };
 
     $.ajax(settings).always(function (response) {
         response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
         $('#orderPaymentMethod').html(response.name);
     });
 }
-
-//function getProductName(prodId) {
-//    var settings = {
-//        "async": true,
-//        "crossDomain": true,
-//        "url": API_URL+"product/"+prodId,
-//        "method": "GET",
-//        "headers": {
-//            "hash": Base64.decode(Cookies.get('hash')),
-//            "Access-Control-Allow-Origin":  '*',
-//            "content-type": "application/json",
-//            "Pragma": "no-cache",
-//            "Cache-Control": "no-cache",
-//            "Expires": 0
-//        },
-//        "cache": false,
-//        "processData": false
-//    }
-//
-//    $.ajax(settings).always(function (response) {
-//        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
-//
-//        prodName = response.name;
-//    });
-//}
 
 function getFullAddress(addressId) {
     var settings = {
@@ -347,7 +333,7 @@ function getFullAddress(addressId) {
         },
         "cache": false,
         "processData": false
-    }
+    };
 
     $.ajax(settings).always(function (response) {
         response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
@@ -358,4 +344,18 @@ function getFullAddress(addressId) {
         }
 
     });
+}
+
+function modalLoaded() {
+    $('.modal-header').removeClass('hidden');
+    $('.modal-body').removeClass('hidden');
+    $('.modal-footer').removeClass('hidden');
+    $('#orderModalLoaderDiv').addClass('hidden');
+}
+
+function modalLoading() {
+    $('#orderModalLoaderDiv').removeClass('hidden');
+    $('.modal-header').addClass('hidden');
+    $('.modal-body').addClass('hidden');
+    $('.modal-footer').addClass('hidden');
 }

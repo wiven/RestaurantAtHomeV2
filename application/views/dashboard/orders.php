@@ -207,24 +207,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="row" id="orderModalLoaderDiv" style="margin: 80px;">
                 <span class="fa fa-spinner fa-spin fa-5x fa-fw" style="width: 100%; z-index: 9999;"></span>
             </div>
-            <div class="modal-header">
+            <div class="modal-header hidden">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title" id="myModalLabel">Orderinfo</h4>
             </div>
-            <div class="modal-body text-justify clearfix">
+            <div class="modal-body text-justify clearfix hidden">
                 <div class="col-lg-6">
-                    Afhaaldatum: <strong><span id="orderCollectDate">19/08/2015</span></strong><br />
-                    Afhaaluur: <strong><span id="orderCollectHour">19u30</span></strong><br />
-                    Betalingsstatus: <span class="label label-success" id="orderPaymentMethod">Betaald (BanContact)</span>
+                    Afhaaldatum: <strong><span id="orderCollectDate">{{ date }}</span></strong><br />
+                    Afhaaluur: <strong><span id="orderCollectHour">{{ hour }}</span></strong><br />
+                    Betalingsstatus: <span class="label label-success" id="orderPaymentMethod">{{ paymentMethod }}</span>
                 </div>
                 <div class="col-lg-6 text-right ">
-                    Klant: <strong><span id="orderClientName">Wim Vandevenne</span></strong><br />
-                    Adres: <strong><em><span id="orderClientAddress">Stokstraat 47, Zele</span></em></strong><br />
-                    Kortingscode: <strong><em><span id="orderCouponCode">-</span></em></strong>
+                    Klant: <strong><span id="orderClientName">{{ name }}</span></strong><br />
+                    Adres: <strong><em><span id="orderClientAddress">{{ address }}</span></em></strong><br />
+                    Kortingscode: <strong><em><span id="orderCouponCode">{{ coupon }}-</span></em></strong>
                 </div>
                 <div class="col-lg-12 clear">
-                    Opmerkingen klant: <strong><span id="orderClientMsg">De steak moet niet te hard gebakken zijn, en de frietjes mogen nog wat slap zijn!</span></strong>
+                    Opmerkingen klant: <strong><span id="orderClientMsg">{{ message }}</span></strong>
                 </div>
                 <div class="col-lg-12">
                     <ul id="orderProducts">
@@ -238,14 +238,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="col-lg-12 text-center clear">
                     <strong>TOTAALBEDRAG: €<span id="orderTotalAmount">112,67</span></strong>
                 </div>
-                <div class="col-lg-6 col-md-6 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-xs-12" id="nextStatusBtn">
                     <a href="#" class="btn btn-warning btn-block orderMarkBusy">
                         <span class="fa fa-check fa-fw"></span>
                         Markeer als bezig
                     </a>
                 </div>
-                <div class="col-lg-6 col-md-6 col-xs-12">
-                    <a href="#" class="btn btn-success btn-block orderMarkReady">
+                <div class="col-lg-6 col-md-6 col-xs-12" id="readyStatusBtn">
+                    <a href="#" class="btn btn-success btn-block orderMarkFinished">
                         <span class="fa fa-check fa-fw"></span>
                         Markeer als klaar
                     </a>
