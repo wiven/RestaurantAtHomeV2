@@ -421,8 +421,8 @@ function photoUpload(prodId) {
 
             if(progress == 100) {
                 console.log('ok');
-                //$('#editCoverModal').modal('hide');
                 setTimeout(function() {
+                    $('#newProductModal').modal('hide');
                     getProducts();
                 }, 500);
             }
@@ -450,6 +450,7 @@ function updatedProductPhotoUpload() {
                 $('#ProductPhoto').parent().parent().removeClass('hidden');
                 $('#ProductPhoto').val('Foto al toegevoegd');
                 setTimeout(function() {
+                    $('#newProductModal').modal('hide');
                     getProducts();
                 }, 1000);
             }
@@ -1030,6 +1031,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
             setTimeout(function(){
                 $('#resto_products').empty();
                 getProducts();
+                $('#newProductModal').modal('hide');
             }, 1000);
         });
     });
