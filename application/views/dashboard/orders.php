@@ -43,18 +43,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </tr>
                             </thead>
                             <tbody>
-                            <?php
-                                for($i = 0; $i < 5; $i++) {
-                                    echo '<tr class="order_detail_tr">
-                                <td>17/'.($i+10).'/2015 '.($i+10).'u00</td>
-                                <td>Wim Vandevenne</td>
-                                <td>4</td>
-                                <td>31</td>
-                                <td>&euro; 24,85</td>
-                            </tr>';
-                                }
-
-                            ?>
+                            <tr class="order_detail_tr">
+                                <td>{{date}}</td>
+                                <td>{{name}}</td>
+                                <td>{{items}}</td>
+                                <td>{{slots}}</td>
+                                <td>{{amount}}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -90,18 +85,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </tr>
                             </thead>
                             <tbody>
-                            <?php
-                            for($i = 0; $i < 5; $i++) {
-                                echo '<tr class="order_detail_tr">
-                                <td>17/0'.($i+5).'/2015 '.($i+10).'u00</td>
-                                <td>Wim Vandevenne</td>
-                                <td>4</td>
-                                <td>31</td>
-                                <td>&euro; 24,85</td>
-                            </tr>';
-                            }
-
-                            ?>
+                                <tr class="order_detail_tr">
+                                    <td>{{date}}</td>
+                                    <td>{{name}}</td>
+                                    <td>{{items}}</td>
+                                    <td>{{slots}}</td>
+                                    <td>{{amount}}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -141,18 +131,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </tr>
                             </thead>
                             <tbody>
-                            <?php
-                            for($i = 0; $i < 5; $i++) {
-                                echo '<tr class="order_detail_tr">
-                                <td>17/0'.($i+5).'/2015 '.($i+14).'u00</td>
-                                <td>Wim Vandevenne</td>
-                                <td>4</td>
-                                <td>31</td>
-                                <td>&euro; 24,85</td>
-                            </tr>';
-                            }
-
-                            ?>
+                            <tr class="order_detail_tr">
+                                <td>{{date}}</td>
+                                <td>{{name}}</td>
+                                <td>{{items}}</td>
+                                <td>{{slots}}</td>
+                                <td>{{amount}}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -188,18 +173,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </tr>
                             </thead>
                             <tbody>
-                            <?php
-                            for($i = 0; $i < 5; $i++) {
-                                echo '<tr class="order_detail_tr">
-                                <td>17/0'.($i+5).'/2015 '.($i+14).'u00</td>
-                                <td>Wim Vandevenne</td>
-                                <td>4</td>
-                                <td>31</td>
-                                <td>&euro; 24,85</td>
-                            </tr>';
-                            }
-
-                            ?>
+                            <tr class="order_detail_tr">
+                                <td>{{date}}</td>
+                                <td>{{name}}</td>
+                                <td>{{items}}</td>
+                                <td>{{slots}}</td>
+                                <td>{{amount}}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -224,6 +204,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div class="modal fade" id="orderInfoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
+            <div class="row" id="orderModalLoaderDiv" style="margin: 80px;">
+                <span class="fa fa-spinner fa-spin fa-5x fa-fw" style="width: 100%; z-index: 9999;"></span>
+            </div>
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
