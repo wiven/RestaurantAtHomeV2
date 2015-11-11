@@ -31,10 +31,6 @@ $(document).ready(function() {
                 $('#loyaltyNumber').val(response[0].points);
                 $('input[value="'+response[0].type+'"]').attr('checked', 'checked');
                 getRestoProducts(resto_id);
-                /*$('#loyaltyProduct').trigger('change');
-                setTimeout(function() {
-                    $('#loyaltyForm').data('formValidation').resetForm();
-                }, 200);*/
             }
         });
     } catch (err) {
@@ -157,7 +153,6 @@ function loyaltyUpdate(loyaltyId) {
 
         // updating loyalty
         $.ajax(settings).always(function (response) {
-            alert('ok');
             $('#loyaltySuccessMsg').removeClass('hidden');
             $('#loyaltyForm').data('formValidation').resetForm();
             $('#loyaltyFormSubmit').removeClass('disabled');
