@@ -1,6 +1,13 @@
-//TODO: fix photo upload
-//TODO: Ajax somewhere reloads all products after a change => duplicate products.
-//TODO: IMPORTANT - Split into functions to make more readable so bug finding goes faster :)
+var product_html = '', prodUrl = '';
+var resto_id = Base64.decode(Cookies.get('restoId'));
+var counter = 0, new_product_id = 0, existingProdId = 0;
+var prodPromoId = 0;
+//const API_URL = 'http://localhost/RestaurantAtHomeAPI/';
+const API_URL = location.href.split('/')[0]+'//'+location.href.split('/')[2]+'/api/';
+var productTypes, submitBtn = '', temp = '';
+var initialRelatedProds = Array();
+var relatedProducts = Array(), prodCategories = Array(), prodCategoryIds = Array();
+
 $(document).ready(function () {
     getProducts();
     getProductCategories();
@@ -91,19 +98,31 @@ $(document).ready(function () {
                 editedProduct["promotionId"] = prodPromoId;
                 editedProduct["name"] = $('#ProductName').val();
                 editedProduct["description"] = $('#ProductDescription').val();
-                editedProduct["photo"] = $('#ProductPhoto').val();
+                //editedProduct["photo"] = $('#ProductPhoto').val();
                 editedProduct["price"] = $('#ProductPrice').val();
                 editedProduct["slots"] = $('#ProductSlots').val();
                 editedProduct["loyaltyPoints"] = $('#ProductLoyalty').val();
                 photoUpload(existingProdId);
                 updateProduct(editedProduct, resto_id, existingProdId);
 
+                $.each(initialRelatedProds, function(index, item) {
+                    deleteRelatedProducts(existingProdId, item);
+                });
+
+                $.each($('#ProductRelatedProducts').val(), function(index, item) {
+                    relateProducts(existingProdId, item);
+                });
+
+
+
+                $('#productForm').data('formValidation').resetForm();
+                $("#productModalSubmit").removeClass('disabled');
+                $("#productModalSubmit").prop('disabled', false);
+                $('#newProductModal').hide();
+                $('body').css('opacity', 1);
+
                 setTimeout(function() {
-                    $('#productForm').data('formValidation').resetForm();
-                    $("#productModalSubmit").removeClass('disabled');
-                    $("#productModalSubmit").prop('disabled', false);
-                    $('#newProductModal').hide();
-                    $('body').css('opacity', 1);
+                    getProducts();
                     //location.reload(true);
                 }, 500);
 
@@ -127,9 +146,14 @@ $(document).ready(function () {
                     "url": API_URL+"product",
                     "method": "POST",
                     "headers": {
+                        "hash": getHashFromCookie(),
+                        "Access-Control-Allow-Origin":  '*',
                         "content-type": "application/json",
-                        "hash": getHashFromCookie
+                        "Pragma": "no-cache",
+                        "Cache-Control": "no-cache",
+                        "Expires": 0
                     },
+                    "cache": false,
                     "processData": false,
                     "data": JSON.stringify(_product)
                 };
@@ -144,7 +168,11 @@ $(document).ready(function () {
 
                         if(relatedProducts != null) {
                             if(relatedProducts.length != 0) {
-                                relatedProducts.split(new_product_id, 1);
+                                try {
+                                    relatedProducts.split(new_product_id, 1);
+                                } catch (err) {
+                                    console.log('oeps');
+                                }
                                 // setting up related product of newly created product (if any)
                                 $.each(relatedProducts, function(index,item) {
                                     relateProducts(new_product_id, item);
@@ -173,10 +201,19 @@ $(document).ready(function () {
             e.preventDefault();
 
             setTimeout(function() {
-                $(submitBtn).removeClass('disabled');
-                $(submitBtn).prop('disabled', false);
+                $('#productModalSubmit').removeClass('disabled');
+                $('#productModalSubmit').prop('disabled', false);
             }, 1000);
-        });
+        })
+        .on('err.form.fv', function(e) {
+            e.preventDefault();
+
+            setTimeout(function() {
+                $('#productModalSubmit').removeClass('disabled');
+                $('#productModalSubmit').prop('disabled', false);
+                $('body').css('opacity', 1);
+            }, 500);
+    });
 
     $('#ProductRelatedProducts').chosen({
         disable_search_threshold: 3,
@@ -189,7 +226,9 @@ $(document).ready(function () {
 });
 
 function getProducts() {
-    $('#resto_products').html("");
+    $('#resto_products').empty();
+    product_html = '';
+
     var settings = {
         "async": true,
         "crossDomain": true,
@@ -353,7 +392,7 @@ function photoUpload(prodId) {
     'use strict';
 
     var url = API_URL+'photo/product/'+existingProdId;
-    console.log(url);
+    //console.log(url);
 
     $('#fileupload').fileupload({
         url: url,
@@ -437,7 +476,8 @@ function productPhotoUpload() {
             if(progress == 100) {
                 $('#addProductPhotoModal').modal('hide');
                 setTimeout(function() {
-                    location.reload();
+                    //location.reload();
+                    getProducts();
                 }, 500);
             }
         }
@@ -446,29 +486,37 @@ function productPhotoUpload() {
 }
 
 function deleteProduct(prodId) {
-    $.ajax({
-        method: "GET",
-        url: API_URL + 'product/delete/' + prodId,
-        dataType: "jsonp",
-        crossDomain: true,
-        headers:{
-            "hash": getHashFromCookie()
-        },
-        xhrFields: {
-            withCredentials: true
+    try {
+        var settings = {
+            "async": true,
+            "crossDomain": true,
+            url: API_URL + 'product/delete/' + prodId,
+            "method": "GET",
+            "headers": {
+                "hash": Base64.decode(Cookies.get('hash')),
+                "Access-Control-Allow-Origin":  '*',
+                "content-type": "application/json",
+                "Pragma": "no-cache",
+                "Cache-Control": "no-cache",
+                "Expires": 0
+            },
+            "cache": false,
+            "processData": false
         }
-    }).always(function (msg) {
-        return true;
-    }).fail(function (jqXHR, textStatus) {
-        console.log(jqXHR);
-        alert("Request failed: " + textStatus);
-    });
+
+        // getting all the initial data
+        $.ajax(settings).always(function (response) {
+            return true;
+        });
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 function updateProduct(values, restoId, prodId) {
-    console.log(values);
+    /*console.log(values);
     console.log(restoId);
-    console.log(prodId);
+    console.log(prodId);*/
 
     var transferData = {
         "id": prodId,
@@ -521,60 +569,30 @@ function relateProducts(newProdId, relatedProd) {
     });
 }
 
-$('#ProductRelatedProducts').on('chosen:maxselected', function(evt, params) { $('#ProductRelatedProductsError').addClass('label label-danger'); });
+function deleteRelatedProducts(newProdId, relatedProd) {
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": API_URL+"product/related/delete/"+newProdId+"/"+relatedProd,
+        "method": "GET",
+        "headers": {
+            "content-type": "application/json",
+            "hash": getHashFromCookie()
+        },
+        "processData": false
+    };
 
-var product_html = '', prodUrl = '';
-var resto_id = Base64.decode(Cookies.get('restoId'));
-var counter = 0, new_product_id = 0, existingProdId = 0;
-var prodPromoId = 0;
-//const API_URL = 'http://localhost/RestaurantAtHomeAPI/';
-const API_URL = 'http://syst.restaurantathome.be/api/';
-var productTypes, submitBtn = '', temp = '';
-var relatedProducts = Array(), prodCategories = Array(), prodCategoryIds = Array();
-
-function get_data(method, type, id) {
-    $.ajax({
-        method: method,
-        url: API_URL + type + '/' + id,
-        dataType: "jsonp",
-        crossDomain: true,
-        xhrFields: {
-            withCredentials: true
-        }
-    }).always(function (msg) {
-        console.log(msg);
-        return msg;
-    }).fail(function (jqXHR, textStatus) {
-        console.log(jqXHR);
-        alert("Request failed: " + textStatus);
+    // delete product links
+    $.ajax(settings).always(function (response) {
+        //console.log(response);
     });
 }
 
+$('#ProductRelatedProducts').on('chosen:maxselected', function(evt, params) { $('#ProductRelatedProductsError').addClass('label label-danger'); });
+
 $('#newProductModal').off().on('show.bs.modal', function(e) {
+    modalLoading();
     setProductCategories();
-    // get all the categories
-    /*$.ajax({
-        method: "GET",
-        "url": API_URL+"manage/producttype/all/",
-        dataType: "jsonp",
-        crossDomain: true,
-        xhrFields: {
-            withCredentials: true
-        }
-    }).always(function (msg) {
-        var categoryList = $('#ProductType');
-
-        // first empty the dropdown menu and populate with default value@
-        categoryList.empty();
-        categoryList.append('<option value=""></option>');
-
-        $.each(msg, function(index,item) {
-            categoryList.append('<option value="'+item.id+'">'+item.name+'</option>');
-        });
-        alert('ok');
-    }).fail(function (jqXHR, textStatus) {
-        alert("Request failed: " + textStatus);
-    });*/
 
     var button = $(e.relatedTarget); // Button that triggered the modal
     var title = button.data('title'); // Extract info from data-* attributes
@@ -624,7 +642,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
                 return;
             }
 
-            //console.log(response);
+            console.log(response);
 
             product = response;
             //console.log(product);
@@ -636,9 +654,11 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
             if(product.photo != null) {
                 if((product.photo.url.indexOf('null') != -1)) {
                     $('#ProductPhoto').parent().parent().addClass('hidden');
+                    $('#PhotoBtn').removeClass('hidden');
                 } else {
                     $('#ProductPhoto').parent().parent().removeClass('hidden');
                     $('#ProductPhoto').val('Foto al toegevoegd');
+                    $('#PhotoBtn').addClass('hidden');
                 }
             } else {
                 $('#ProductPhoto').parent().parent().addClass('hidden');
@@ -646,6 +666,12 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
 
             $('#ProductSlots').val(product.slots);
             prodPromoId = product.promotionId;
+
+            setTimeout(function() {
+                initialRelatedProds = $('#ProductRelatedProducts').val();
+                modalLoaded();
+            }, 500);
+
         });
 
 
@@ -753,7 +779,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
                     return;
                 }
                 product = response;
-                console.log(product);
+                //console.log(product);
                 /*var select_to_add = $('#ProductRelatedProducts');
 
                  select_to_add.empty();
@@ -899,7 +925,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
         $('#ProductPhoto').val('');
         $('#ProductSlots').val('');
 
-        var newProduct = {
+        /*var newProduct = {
             "restaurantId": resto_id,
             "producttypeId": $('#ProductType').val(),
             "name": $('#ProductName').val(),
@@ -921,7 +947,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
             "processData": false,
             "data": JSON.stringify(newProduct)
         }
-
+*/
         //console.log(JSON.stringify(newProduct));
 
         /*$.ajax(settings).always(function (response) {
@@ -929,6 +955,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
         });*/
 
         $('#ProductDelete').removeClass('hidden');
+        modalLoaded();
     }
 
     $(submitBtn).off().on('click', function(evt) {
@@ -963,7 +990,8 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
 
 
                 setTimeout(function(){
-                    location.reload(true);
+                    //location.reload(true);
+                    getProducts();
                 }, 1000);
 
 
@@ -1000,6 +1028,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
             }, 500);
 
             setTimeout(function(){
+                $('#resto_products').empty();
                 getProducts();
             }, 1000);
         });
@@ -1195,7 +1224,19 @@ $('#productModalSubmit').on('click', function(evt) {
     console.log($(this).val());
 });
 
+function modalLoaded() {
+    $('.modal-header').removeClass('hidden');
+    $('.modal-body').removeClass('hidden');
+    $('.modal-footer').removeClass('hidden');
+    $('#productModalLoaderDiv').addClass('hidden');
+}
 
+function modalLoading() {
+    $('#productModalLoaderDiv').removeClass('hidden');
+    $('.modal-header').addClass('hidden');
+    $('.modal-body').addClass('hidden');
+    $('.modal-footer').addClass('hidden');
+}
 
 
 
