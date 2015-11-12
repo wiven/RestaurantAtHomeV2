@@ -56,7 +56,7 @@
                         <a href="/dashboard/partners"><i class="fa fa-link fa-fw"></i> Partners</a>
                     </li>
                     <li id="contactLink">
-                        <a href="/dashboard/contact"><i class="fa fa-envelope-o fa-fw"></i> Contact</a>
+                        <a href="mailto:info@restaurantathome.be"><i class="fa fa-envelope-o fa-fw"></i> Contact</a>
                     </li>
                 </ul>
             </div>
