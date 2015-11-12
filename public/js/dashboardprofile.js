@@ -1,4 +1,7 @@
-//var resto_id = 5;
+/* DEFINING CONSTANTS */
+const API_URL = location.href.split('/')[0]+'//'+location.href.split('/')[2]+'/api/';
+
+/* DEFINING (GLOBAL) VARIABLES */
 var resto_id = Base64.decode(Cookies.get('restoId'));
 var map = '', restoName = '', specialtyId = 0, kitchenTypeIdDb = 0, addressIdDb = 0;
 var latDb = '', lngDb = '';
@@ -7,7 +10,6 @@ var addressArray = Array();
 var weekDayNames = Array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
 var weekDayNamesNL = Array('maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag', 'zondag');
 var contactInfoFormOK = false, SocialFormOK = false;
-const API_URL = location.href.split('/')[0]+'//'+location.href.split('/')[2]+'/api/';
 
 // When the document is ready
 $(document).ready(function () {
@@ -582,12 +584,8 @@ $('#editContactModal').off().on('show.bs.modal', function() {
     }
 });
 
-/*$('#editContactModal').off().on('shown.bs.modal', function() {
-    $('[name="restoSpecialty"]').val(specialtyId);
-    $('[name="restoKitchenType"]').val(kitchenTypeIdDb);
-});*/
-
 $('#editPaymentsModal').off().on('show.bs.modal', function() {
+    modalLoading('editPaymentsModal', 'paymentsModalLoaderDiv');
     // getting all the payment methods
     var settings = {
         "async": true,
@@ -639,6 +637,8 @@ $('#editPaymentsModal').off().on('show.bs.modal', function() {
         $.each(response, function(index,item) {
             $('[name="payment'+response[index].id+'"]').attr("checked", true);
         });
+
+        modalLoaded('editPaymentsModal', 'paymentsModalLoaderDiv');
     });
 });
 
@@ -738,6 +738,117 @@ function getSocialLinks(restoId) {
             }
         });
     });
+}
+
+function getRestoPhotos(restoId) {
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": API_URL+"photo/restaurant/" + restoId,
+        "method": "GET",
+        "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
+            "content-type": "application/json",
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache",
+            "Expires": 0
+        },
+        "cache": false,
+        "processData": false
+    }
+
+    // adding photos to UI
+    $.ajax(settings).always(function (response) {
+        response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
+
+        $('.carousel-indicators').empty();
+        $('.carousel-inner').empty();
+        $('#existingRestoPhotos').empty();
+
+        if(response.length != 0) {
+            $.each(response, function(index,item) {
+                $('#existingRestoPhotos').append(
+                    '<li class="list-group-item col-lg-6 col-md-6 col-xs-12">'+
+                        '<img src="'+item.url.thumbnailUrl+'" style="max-width: 1OOpx; max-height: 100px;" alt="Sfeerfoto restaurant" />'+
+                        '<a href="#" class="btn btn-danger pull-right btnDeleteRestoPhoto" title="Foto verwijderen" data-id="'+item.id+'">'+
+                            '<span class="fa fa-trash-o fa-fw fa-2x pull-right"></span>'+
+                        '</a>'+
+                    '</li>');
+                if(index == 0) {
+                    $('.carousel-indicators').append('<li data-target="#carousel-resto-photos" data-slide-to="'+index+'" class="active"></li>');
+
+                    $('.carousel-inner').append(
+                        '<div class="item active">'+
+                            '<img src="'+item.url.thumbnailUrl+'" alt="Sfeerfoto">'+
+                            '<div class="carousel-caption"></div>'+
+                        '</div>');
+                } else {
+                    $('.carousel-indicators').append('<li data-target="#carousel-resto-photos" data-slide-to="'+index+'"></li>');
+
+                    $('.carousel-inner').append(
+                        '<div class="item">'+
+                            '<img src="'+item.url.thumbnailUrl+'" alt="Sfeerfoto">'+
+                            '<div class="carousel-caption"></div>'+
+                        '</div>');
+                }
+
+            });
+
+            $('#photosLogo').removeClass('hidden');
+        } else {
+            $('#existingRestoPhotos').append('<li class="list-group-item col-xs-12 text-center">Er zijn nog geen foto\'s voor dit restaurant. Voeg er snel enkele toe door op de groene knop "Toevoegen" hierboven te klikken.</li>');
+            $('#photosLogo').addClass('hidden');
+        }
+
+        $('.btnDeleteRestoPhoto').on('click', function() {
+            var btn = $(this);
+            swal({
+                title: "Bent u zeker dat u deze foto wil verwijderen?",
+                text: "Let op: dit is onomkeerbaar!",
+                cancelButtonText: "Annuleren",
+                type: "warning",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            },
+            function(){
+                setTimeout(function(){
+                    $('#existingRestoPhotos').empty();
+                    $('#existingRestoPhotos').append('<span class="fa fa-spinner fa-spin fa-5x fa-fw" style="width: 100%; z-index: 9999;"></span>');
+                    deleteRestoPhoto(btn.attr('data-id'));
+                    swal("Foto werd verwijderd!");
+
+
+                    setTimeout(function(){
+                        getRestoPhotos(resto_id);
+                    }, 500);
+                }, 500);
+            });
+        });
+    });
+}
+
+function deleteRestoPhoto(phId) {
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": API_URL+"photo/restaurant/delete/" + phId,
+        "method": "GET",
+        "headers": {
+            "hash": Base64.decode(Cookies.get('hash')),
+            "Access-Control-Allow-Origin":  '*',
+            "content-type": "application/json",
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache",
+            "Expires": 0
+        },
+        "cache": false,
+        "processData": false
+    }
+
+    // adding photos to UI
+    $.ajax(settings).always(function (response) {});
 }
 
 function addSocialLink(restoId, typeId, typeValue) {
@@ -843,8 +954,6 @@ function getInitialRestoInfo(restoId) {
             console.log(response);
 
             restoName = response.restaurantInfo.name;
-            /*$('input[name="restoName"]').val(response.restaurantInfo.name);
-            $('[name="restoComment"]').text(response.restaurantInfo.comment);*/
 
             // LEFT COLUMN
             $('.restoAddress').html(response.addressInfo.street+' '+response.addressInfo.number+', '+response.addressInfo.postcode+' '+response.addressInfo.city);
@@ -862,16 +971,13 @@ function getInitialRestoInfo(restoId) {
             }
 
             kitchenTypeIdDb = response.restaurantInfo.kitchentypeId;
-            //console.log(kitchenTypeIdDb);
             getKitchenType(response.restaurantInfo.kitchentypeId);
-            //console.log(response.restaurantInfo.kitchentypeId);
             getSocialLinks(resto_id);
+            getRestoPhotos(resto_id);
 
             // CENTER COLUMN
             if(response.restaurantInfo.logoPhoto != null) {
-                //console.log(response.restaurantInfo.logoPhoto);
                 $('.restoLogo').attr('src', response.restaurantInfo.logoPhoto.url);
-                //$('.restoLogo').attr('src', '../api/files/'+response.restaurantInfo.logoPhoto);
             } else {
                 $('.restoLogo').attr('src', 'http://placehold.it/450x210');
             }
@@ -1115,24 +1221,6 @@ function getKitchenTypes() {
 }
 
 function updateCoverPhoto(file, restoId) {
-    /*var settings = {
-        "async": true,
-        "crossDomain": true,
-        "url": API_URL+"photo/restaurant/logo/"+restoId,
-        "method": "POST",
-        "processData": false,
-        "headers": {
-            "Pragma": "no-cache" ,
-            "Cache-Control": "no-cache",
-            "Expires": 0
-        },
-        "data": JSON.stringify(file)
-    }
-
-    $.ajax(settings).always(function (response) {
-        console.log(response);
-    });*/
-	
 	'use strict';
 	
     var url = API_URL+'photo/restaurant/logo/'+restoId;
@@ -1605,6 +1693,9 @@ function restoPhotosUpload() {
     $('#restoFileupload').fileupload({
         url: url,
         dataType: 'json',
+        beforeSend: function ( xhr ) {
+            setHeader(xhr);
+        },
         done: function (e, data) {
             $.each(data.result.files, function (index, file) {
                 $('<p/>').text(file.name).appendTo('#files');

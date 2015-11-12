@@ -89,7 +89,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <a id="facebookLogo" class="hidden" title="Facebook" href="" target="_blank"><span class="fa fa-facebook-square fa-2x pull-right"></span></a>
                                 <a id="twitterLogo" class="hidden" title="Twitter" href="" target="_blank"><span class="fa fa-twitter-square fa-2x pull-right"></span></a>
                                 <a id="instagramLogo" class="hidden" title="Instagram" href="" target="_blank"><span class="fa fa-instagram fa-2x pull-right"></span></a>
-                                <a id="photosLogo" class="hidden" title="Sfeerfoto's" href="" target="_blank"><span class="fa fa-picture-o fa-2x pull-right"></span></a>
+                                <a id="photosLogo" href="#" class="hidden" data-toggle="modal" data-target="#photosModal" data-backdrop="static" title="Bekijk de sfeerfoto's"><span class="fa fa-picture-o fa-2x pull-right"></span></a>
 						    </span>
 						</span>
                     </div>
@@ -182,7 +182,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <span>Toevoegen</span>
                                 <input type="file" name="files[]" multiple>
                             </span>
-                            <button type="submit" class="btn btn-primary start">
+                            <!--<button type="submit" class="btn btn-primary start">
                                 <i class="glyphicon glyphicon-upload"></i>
                                 <span>Start upload</span>
                             </button>
@@ -193,8 +193,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <button type="button" class="btn btn-danger delete">
                                 <i class="glyphicon glyphicon-trash"></i>
                                 <span>Verwijderen</span>
-                            </button>
-                            <input type="checkbox" class="toggle">
+                            </button>-->
+<!--                            <input type="checkbox" class="toggle">-->
                             <!-- The global file processing state -->
                             <span class="fileupload-process"></span>
                         </div>
@@ -208,6 +208,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <div class="progress-extended">&nbsp;</div>
                         </div>
                     </div>
+                    <div>
+                        <h4>Bestaande foto's</h4>
+                        <ul class="list-group" id="existingRestoPhotos">
+                            <li class="list-group-item">Test
+                                <a href="#" class="btn btn-danger pull-right btnDeleteRestoPhoto" title="Foto verwijderen" data-id=""><span class="fa fa-trash-o fa-fw pull-right"></span></a>
+                            </li>
+                        </ul>
+                    </div>
                     <!-- The table listing the files available for upload/download -->
                     <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
                 </form>
@@ -220,18 +228,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div class="modal fade" id="editPaymentsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="row" id="paymentsModalLoaderDiv" style="margin: 80px;">
+                <span class="fa fa-spinner fa-spin fa-5x fa-fw" style="width: 100%; z-index: 9999;"></span>
+            </div>
+            <div class="modal-header hidden">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title" id="myModalLabel">Betaalmogelijkheden bewerken</h4>
             </div>
-            <div class="modal-body text-justify">
+            <div class="modal-body text-justify hidden">
                 <div class="col-lg-12">
                     <form id="paymentsForm"></form>
                 </div>
             </div>
 
-            <div class="modal-footer">
+            <div class="modal-footer hidden">
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="cancel" class="btn btn-default" data-dismiss="modal">Annuleren</button>
@@ -525,6 +536,43 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
             <div class="modal-body clearfix" style="padding-top: 0;">
                 <div id="mapCanvas" style="height: 500px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Photos Modal -->
+<div class="modal fade" id="photosModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom: 0;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title" id="myModalLabel">Sfeerfoto's</h3>
+            </div>
+            <div class="modal-body clearfix" style="padding-top: 0;">
+                <div id="carousel-resto-photos" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-resto-photos" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-resto-photos" data-slide-to="1"></li>
+                        <li data-target="#carousel-resto-photos" data-slide-to="2"></li>
+                    </ol>
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" role="listbox">
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#carousel-resto-photos" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Vorige</span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-resto-photos" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Volgende</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
