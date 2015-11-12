@@ -10050,6 +10050,11 @@ a.product_info {
     max-width: 100%;
 }
 
+a.top_resto img {
+    height: 125px;
+    object-fit: contain;
+}
+
 .basket_count_badge {
     color: #FFF !important;
     background: #5cb85c !important;
