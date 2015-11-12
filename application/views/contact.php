@@ -26,7 +26,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			</p>
 		</div>
 
-		<div class="col-lg-8">
+		<div class="col-lg-12">
 			<form class="form-horizontal">
 				<div class="form-group">
 					<label class="col-sm-2 control-label" style="text-align: left;">Ik</label>

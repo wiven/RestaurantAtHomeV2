@@ -8,7 +8,9 @@ class Register extends CI_Controller {
     public function index() {
         $data_header = array(
             'page_title' => ' - Registreren',
-            'additional_styles' => "<link rel='stylesheet' href='" . public_url() . "css/min/formValidation.min.css'>"
+            'additional_styles' => "<link rel='stylesheet' href='" . public_url() . "css/min/formValidation.min.css'>
+<link rel='stylesheet' href='".public_url()."css/min/jquery.select2.min.css'>
+<link rel='stylesheet' href='".public_url()."css/sweetalert.css'>"
             //'language_test' => lang('hello')
         );
 
@@ -16,6 +18,9 @@ class Register extends CI_Controller {
             'additional_scripts' => "<script src='".public_url()."js/min/formValidation.min.js'></script>
 <script src='".public_url()."js/min/formValidation.bootstrap.min.js'></script>
 <script src='".public_url()."js/formValidation_nl_BE.js'></script>
+<script src='".public_url()."js/min/jquery.select2.min.js'></script>
+<script src='".public_url()."js/min/sha256.min.js'></script>
+<script src='".public_url()."js/sweetalert.js'></script>
 <script src='".public_url()."js/register.js'></script>",
             'current_url' => @explode('.', (@$_SERVER['HTTP_HOST'].@$_SERVER['PATH_INFO']))[1]
         );

@@ -6,7 +6,7 @@
 	<div class="row">
 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-justify">
 			<p>
-				Heb je een vraag voor ons? Heb je enkele tips om RestaurantAtHome nog beter te maken? Aarzel dan niet ons te contacteren! We reageren zo snel mogelijk op je vraag.
+				Wil u ook graag gebruik maken van ons platform? Door het onderstaande formulier in te vullen kan u zich registreren als restaurant
 			</p>
 		</div>
 
@@ -124,13 +124,17 @@
 						<span class="glyphicon glyphicon-asterisk form-control-feedback" aria-hidden="true"></span>
 					</label>
 					<div class="col-sm-10">
-						<input type="text" class="form-control" id="inputPlace" name="inputPlace" aria-describedby="inputPlaceStatus" required="required" placeholder="Plaats">
+<!--						<input type="text" class="form-control" id="inputPlace" name="inputPlace" aria-describedby="inputPlaceStatus" required="required" placeholder="Plaats">-->
 
+						<div id="inputPlaceDbLoader" class="hidden"><span class="fa fa-spinner fa-spin fa-2x fa-fw" style="width: 100%; z-index: 9999;"></span></div>
+						<select class="form-control" name="inputPlaceDb" id="inputPlaceDb" required="required">
+							<option value=""></option>
+						</select>
 						<span id="inputPlaceStatus" class="sr-only">(success)</span>
 					</div>
 				</div>
 
-				<div class="form-group has-feedback">
+				<!--<div class="form-group has-feedback">
 					<label class="col-sm-2 control-label" style="text-align: left;" for="inputZip">Postcode
 						<span class="glyphicon glyphicon-asterisk form-control-feedback" aria-hidden="true"></span>
 					</label>
@@ -139,7 +143,7 @@
 						<span id="inputZipStatus" class="sr-only">(success)</span>
 					</div>
 				</div>
-
+-->
 				<!-- RESTO REGISTRATION -->
 				<div class="restoRegistration hidden">
 					<h3>Stap 3 van <span class="totalStepsCount"></span>: Restaurantinformatie</h3>
@@ -161,9 +165,6 @@
 						<div class="col-sm-10">
 							<select class="form-control" id="inputRestoType" name="inputRestoType" aria-describedby="inputRestoTypeStatus" required="required" placeholder="Keukentype">
 								<option value="">Keukentype</option>
-								<option value="1">Frans</option>
-								<option value="2">Belgisch</option>
-								<option value="3">Berlaars</option>
 							</select>
 
 
@@ -200,21 +201,18 @@
 					</div>
 
 					<div class="form-group has-feedback">
-						<label class="col-sm-2 control-label" style="text-align: left;" for="inputRestoLogo">Logo
-						</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="inputRestoLogo" name="inputRestoLogo" aria-describedby="inputRestoLogoStatus" placeholder="Logo">
-							<span id="inputRestoLogoStatus" class="sr-only">(success)</span>
-						</div>
-					</div>
-
-					<div class="form-group has-feedback">
 						<label class="col-sm-2 control-label" style="text-align: left;" for="inputRestoDescription">Beschrijving
 						</label>
 						<div class="col-sm-10">
 							<textarea class="form-control" id="inputRestoDescription" name="inputRestoDescription" aria-describedby="inputRestoDescriptionStatus" placeholder="Beschrijving"></textarea>
 
 							<span id="inputRestoDescriptionStatus" class="sr-only">(success)</span>
+						</div>
+					</div>
+
+					<div class="form-group has-feedback">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label" style="text-align: left;"><small>Logo kan toegevoegd worden na registratie</small></label>
 						</div>
 					</div>
 
