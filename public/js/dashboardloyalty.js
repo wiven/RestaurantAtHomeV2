@@ -24,7 +24,7 @@ $(document).ready(function() {
         // getting all the initial data
         $.ajax(settings).always(function (response) {
             response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
-            console.log(response);
+           //console.log(response);
             if(response.length == 1) {
                 loyId = response[0].id;
                 $('#loyaltyReductionAmount').val(response[0].amount);
@@ -34,7 +34,7 @@ $(document).ready(function() {
             }
         });
     } catch (err) {
-        console.log(err);
+       //console.log(err);
     }
 
     $('#loyaltyForm').formValidation({
@@ -164,6 +164,6 @@ function loyaltyUpdate(loyaltyId) {
             }, 1500);
         });
     } catch (err) {
-        console.log(err);
+       //console.log(err);
     }
 }

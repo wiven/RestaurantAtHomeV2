@@ -267,7 +267,7 @@ function changeOrderState(ordId, statusCode) {
         'orderStatusId': statusCode
     };
 
-    console.log(updatedOrder);
+    //console.log(updatedOrder);
 
     var settings = {
         "async": true,

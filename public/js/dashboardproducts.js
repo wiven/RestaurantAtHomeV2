@@ -171,7 +171,7 @@ $(document).ready(function () {
                                 try {
                                     relatedProducts.split(new_product_id, 1);
                                 } catch (err) {
-                                    console.log('oeps');
+                                   //console.log('oeps');
                                 }
                                 // setting up related product of newly created product (if any)
                                 $.each(relatedProducts, function(index,item) {
@@ -254,7 +254,7 @@ function getProducts() {
             return;
         }
 
-        console.log(response);
+        //console.log(response);
 
         //console.log(msg);
         if(response.products.length != 0) {
@@ -307,7 +307,7 @@ function getProducts() {
     }).always(function (msg) {
 
     }).fail(function (jqXHR, textStatus) {
-        console.log(jqXHR);
+       //console.log(jqXHR);
         alert("Request failed: " + textStatus);
     });*/
 }
@@ -387,7 +387,7 @@ function setProductCategories() {
 }
 
 function photoUpload(prodId) {
-    console.log('photoUpload');
+   //console.log('photoUpload');
     // handle file upload for photo picture
     'use strict';
 
@@ -417,10 +417,10 @@ function photoUpload(prodId) {
         },
         progressall: function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
-            console.log(url);
+           //console.log(url);
 
             if(progress == 100) {
-                console.log('ok');
+               //console.log('ok');
                 setTimeout(function() {
                     $('#newProductModal').modal('hide');
                     getProducts();
@@ -510,14 +510,14 @@ function deleteProduct(prodId) {
             return true;
         });
     } catch (err) {
-        console.log(err);
+       //console.log(err);
     }
 }
 
 function updateProduct(values, restoId, prodId) {
     /*console.log(values);
-    console.log(restoId);
-    console.log(prodId);*/
+   //console.log(restoId);
+   //console.log(prodId);*/
 
     var transferData = {
         "id": prodId,
@@ -643,7 +643,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
                 return;
             }
 
-            console.log(response);
+           //console.log(response);
 
             product = response;
             //console.log(product);
@@ -952,7 +952,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
         //console.log(JSON.stringify(newProduct));
 
         /*$.ajax(settings).always(function (response) {
-            console.log(response);
+           //console.log(response);
         });*/
 
         $('#ProductDelete').removeClass('hidden');
@@ -964,7 +964,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
         $('body').css('opacity', 0.5);
         $(this).addClass('disabled');
         $(this).prop('disabled', true);
-        console.log($('#ProductRelatedProducts').val());
+       //console.log($('#ProductRelatedProducts').val());
         $('#productForm').submit();
     });
 
@@ -1037,7 +1037,7 @@ $('#newProductModal').off().on('show.bs.modal', function(e) {
     });
 
     /*$('#ProductRelatedProducts').on('change', function (e) {
-        console.log($(this).val());
+       //console.log($(this).val());
     });*/
 });
 
@@ -1223,7 +1223,7 @@ function getHashFromCookie() {
 $('#productModalSubmit').on('click', function(evt) {
     evt.preventDefault();
 
-    console.log($(this).val());
+   //console.log($(this).val());
 });
 
 function modalLoaded() {
@@ -1273,7 +1273,7 @@ function modalLoading() {
 //            product_html += '<a href="#" data-toggle="modal" data-title="Product bewerken" data-target="#newProductModal" data-backdrop="static" data-id="'+msg.id+'" class="edit_product"><div class="col-sm-6 col-md-3 col-lg-3"><div class="thumbnail"><img src="/public/img/default_product.gif"><div class="caption"><h3 id="thumbnail-label">'+msg.name+'</h3></div></div></div></a>';
 //        }
 //    }).fail(function (jqXHR, textStatus) {
-//        console.log(jqXHR);
+//       //console.log(jqXHR);
 //        alert("Request failed: " + textStatus);
 //    });
 //}

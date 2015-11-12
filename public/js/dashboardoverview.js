@@ -30,7 +30,7 @@ $(document).ready(function () {
         }*/
     $.ajax(settings).always(function (msg) {
         msg = JSON.parse(msg.responseText.substr(1, msg.responseText.length-2));
-        console.log(msg);
+        //console.log(msg);
     //}).always(function (msg) {
         //console.log(msg);
         var newOrders = msg.newOrders;
@@ -267,7 +267,7 @@ $(document).ready(function () {
         //console.log(JSON.stringify(updated_promotion));
 
         $.ajax(settings).always(function (response) {
-            console.log(response);
+           //console.log(response);
         });
 
         var promotionProduct = $('#PromotionProduct').val();
@@ -306,10 +306,10 @@ $(document).ready(function () {
                     "data": JSON.stringify(updated_product)
                 }
 
-                console.log(JSON.stringify(updated_product));
+               //console.log(JSON.stringify(updated_product));
 
                 $.ajax(settings).always(function (response) {
-                    console.log(response);
+                   //console.log(response);
                 });
             });
         }
@@ -368,7 +368,7 @@ function check_new_orders(restoId) {
     //}).always(function (msg) {
     $.ajax(settings).always(function (response) {
         msg = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
-        console.log(msg.count);
+       //console.log(msg.count);
 
         if(parseInt(msg.count) !== 0) {
             if(parseInt(msg.count) === 1) {
@@ -394,14 +394,14 @@ function get_data(method, type, id) {
             withCredentials: true
         }
     }).always(function (msg) {
-        console.log(msg);
+       //console.log(msg);
         return msg;
     });
 }
 
 function pad(num, size) {
-    console.log('num: '+num);
-    console.log('size: '+size);
+   //console.log('num: '+num);
+   //console.log('size: '+size);
     var s = num+"";
     while (s.length < size) s = "0" + s;
     return s;
@@ -460,7 +460,7 @@ $('#newActionModal').on('show.bs.modal', function(e) {
                 withCredentials: true
             }
         }).always(function (msg) {
-            console.log('products');
+           //console.log('products');
             var select_to_add = $('#PromotionProduct');
 
             select_to_add.empty();
