@@ -5,6 +5,11 @@ $(document).ready(function () {
 		goBack();
 	});
 
+	if(typeof(Cookies.get('hash')) != 'undefined') {
+		$('.loginLink').html('Log uit <i class="fa fa-sign-out fa-fw"></i>');
+		$('.loginLink').attr('href', '/logout');
+	}
+
 	/* $('input, textarea').placeholder();
 
 	$(':password').pwstrength({

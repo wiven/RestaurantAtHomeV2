@@ -1,6 +1,5 @@
 const CALLBACK = "b81ba5e4af3691e5227d91cbda562e9bf8b88bb7e8c9a8e3a9938e4feee62f5a";
-const API_URL = 'http://syst.restaurantathome.be/api/';
-/*const API_PREFIX = "http://localhost/RestaurantAtHomeAPI/";*/
+const API_URL = location.href.split('/')[0]+'//'+location.href.split('/')[2]+'/api/';
 const REDIRECT_URL = window.location.search.replace("?", "").split('=')[1];
 
 $( document ).ready(function() {
@@ -10,11 +9,13 @@ $( document ).ready(function() {
                 if(REDIRECT_URL.length != 0) {
                     window.location.href = '../'+REDIRECT_URL;
                 } else {
-                    window.location.href = '../../';
+                    window.location.href = '../dashboard/';
                 }
             } catch(e) {
-                window.location.href = '../../';
+                window.location.href = '../dashboard/';
             }
+        } else {
+            window.location.href = '../restaurantdetail/';
         }
     }
 
@@ -37,71 +38,12 @@ $( document ).ready(function() {
         evt.preventDefault();
         FB.login();
     });*/
-
-    // Generate a simple captcha
-    /*function randomNumber(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-
-    function generateCaptcha() {
-        $('#captchaOperation').html([randomNumber(1, 100), '+', randomNumber(1, 200), '='].join(' '));
-    }
-
-    generateCaptcha();
-
-    $('#contactForm')
-        .formValidation({
-            framework: 'bootstrap',
-            icon: {
-                valid: 'fa fa-check',
-                invalid: 'fa fa-remove',
-                validating: 'fa fa-refresh'
-            },
-            fields: {
-                email: {
-                    validators: {
-                        notEmpty: {
-                            message: 'Dit is een verplicht veld'
-                        },
-                        emailAddress: {
-                            message: 'Dit is geen geldig e-mailadres'
-                        }
-                    }
-                },
-                password: {
-                    enabled: false,
-                    validators: {
-                        notEmpty: {
-                            message: 'Dit is een verplicht veld'
-                        }
-                    }
-                }
-            }
-        });*/
-
-
-/*
-    $.ajax({
-        method: "POST",
-        url: API_PREFIX + 'login/'+'thdepauw@hotmail.com/a361f49bee3c15f9691c92506d14361e/0',
-        dataType: "jsonp",
-        crossDomain: true,
-        xhrFields: {
-            withCredentials: true
-        }
-    }).done(function (msg) {
-        alert(msg.ack);
-        //$('#log').html(msg.ack);
-    }).fail(function (jqXHR, textStatus) {
-        //console.log(jqXHR);
-        alert("Request failed: " + textStatus);
-    });*/
 });
 
 // This is called with the results from from FB.getLoginStatus().
 /*function statusChangeCallback(response) {
     /!*console.log('statusChangeCallback');
-    console.log(response);*!/
+   //console.log(response);*!/
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation
@@ -169,24 +111,14 @@ $( document ).ready(function() {
 // Here we run a very simple test of the Graph API after login is
 // successful.  See statusChangeCallback() for when this call is made.
 /*function testAPI() {
-   /!* console.log('Welcome!  Fetching your information.... ');*!/
+   /!*console.log('Welcome!  Fetching your information.... ');*!/
     FB.api('/me', function(response) {
-        console.log('Successful login for: ' + response.name);
+       console.log('Successful login for: ' + response.name);
         setUserHash('', response.email);
         /!*document.getElementById('status').innerHTML =
          'Bedankt om in te loggen ' + response.name + '!';*!/
     });
 }*/
-
-
-
-
-
-
-
-
-
-
 
 /*function fb_login(){
     FB.login(function(response) {
@@ -231,7 +163,7 @@ $( document ).ready(function() {
 
         } else {
             //user hit cancel button
-            console.log('User cancelled login or did not fully authorize.');
+           //console.log('User cancelled login or did not fully authorize.');
 
         }
     }, {
@@ -265,7 +197,7 @@ function setUserHash(hash, email) {
 
         $.ajax(settings).always(function (response) {
             response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
-            console.log(response);
+            //console.log(response);
 
             try {
                 switch(response.type) {
@@ -309,12 +241,12 @@ function setUserHash(hash, email) {
             } catch (err) {
                 $('#login_danger .alert').text('Ongeldige email of ongeldig paswoord');
                 $('#login_danger').removeClass('hidden');
-                console.log(err);
+                //console.log(err);
             }
         });
     } catch (err) {
         $('#login_danger .alert').text('Oeps, hier ging iets mis!');
         $('#login_danger').removeClass('hidden');
-        console.log(err);
+       //console.log(err);
     }
 }
