@@ -28,7 +28,11 @@
 					</div>
 
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 text-center" id="important_info_resto">
-						<a href="https://www.google.com/maps?daddr=51.0993192,3.8444533&saddr" title="Routebeschrijving" target="_blank"><img src="https://cdn3.iconfinder.com/data/icons/internet-and-web-4/78/internt_web_technology-08-16.png" /> <span class="restoAddress">IJzerfrontlaan 13, 8500 Kortrijk</span></a>
+<!--						<a href="https://www.google.com/maps?daddr=51.0993192,3.8444533&saddr" title="Routebeschrijving" target="_blank">-->
+						<a href="#" title="Routebeschrijving" data-toggle="modal" data-target="#mapsModal" data-backdrop="static">
+							<img src="https://cdn3.iconfinder.com/data/icons/internet-and-web-4/78/internt_web_technology-08-16.png" />
+							<span class="restoAddress">IJzerfrontlaan 13, 8500 Kortrijk</span>
+						</a>
 						<!--data-toggle="modal" data-target="#mapsModal" data-backdrop="static"-->
 						<br /> <span class="restoPhone">+32 2 123 45 67</span>
 						<br />
@@ -260,7 +264,7 @@
 				<h3 class="modal-title" id="myModalLabel">Locatie</h3>
 			</div>
 			<div class="modal-body clearfix" style="padding-top: 0;">
-				<div id="mapCanvas" style="width: 100%;"></div>
+				<div id="mapCanvas" style="height: 500px; width: 100%;"></div>
 			</div>
 		</div>
 	</div>

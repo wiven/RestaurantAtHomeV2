@@ -1,4 +1,8 @@
+/* DEFINING CONSTANTS */
 const API_URL = 'http://syst.restaurantathome.be/api/';
+
+/* DEFINING VARIABLES */
+var restoName = '';
 
 function getRestaurant(resto, updateResults) {
     $("#all_results").empty();
@@ -25,6 +29,8 @@ function getRestaurant(resto, updateResults) {
         response = JSON.parse(response.responseText.substr(1, response.responseText.length - 2));
         console.log(response);
 
+        restoName = response.restaurantDetails.restaurantInfo.name;
+
         // setting all the restaurant details
         if (response.restaurantDetails.addressInfo.addition.length != 0) {
             var addressNumber = response.restaurantDetails.addressInfo.number + '/' + response.restaurantDetails.addressInfo.addition;
@@ -34,6 +40,34 @@ function getRestaurant(resto, updateResults) {
         var address = response.restaurantDetails.addressInfo.street + ' ' + addressNumber + ', ' + response.restaurantDetails.addressInfo.postcode + ' ' + response.restaurantDetails.addressInfo.city;
 
         $('.restoAddress').text(address);
+
+
+        try {
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "http://maps.google.com/maps/api/geocode/json?address=" +
+                    encodeURIComponent(
+                        response.restaurantDetails.addressInfo.street +
+                        ' ' +
+                        addressNumber +
+                        ', ' +
+                        response.restaurantDetails.addressInfo.postcode +
+                        ' ' +
+                        response.restaurantDetails.addressInfo.city
+                    ) + "BE&sensor=false",
+                "method": "GET",
+                "cache": false,
+                "processData": false
+            };
+
+            $.ajax(settings).always(function (response) {
+                $('.restoAddress').attr('data-lat', response.results[0].geometry.location.lat.toString());
+                $('.restoAddress').attr('data-long', response.results[0].geometry.location.lng.toString());
+            });
+        } catch (err) {
+            console.log('adres NOK');
+        }
         $('.restoPhone').text(response.restaurantDetails.restaurantInfo.phone);
         $('.restoEmail').text(response.restaurantDetails.restaurantInfo.email);
         $('.restoEmail').parent().attr('href', 'mailto:' + response.restaurantDetails.restaurantInfo.email);
@@ -439,11 +473,6 @@ $(document).ready(function () {
     $('.delete_from_cart').on('click', function () {
         $(this).parent().parent().parent().remove();
     });
-
-    $('#mapsModal').on('show.bs.modal', function () {
-        $("#mapCanvas").html('<iframe src="//www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2520.716661239!2d3.2743649!3d50.8178881!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c33b23b2900d8d%3A0x75420920515aaeef!2sIJzerfrontlaan+13%2C+8500+Kortrijk!5e0!3m2!1snl!2sbe!4v1429536505436" width="100%" height="450" frameborder="0" style="border:0"></iframe>');
-    });
-
 });
 
 function getRandomColor() {
@@ -454,3 +483,32 @@ function getRandomColor() {
     }
     return color;
 }
+
+$('#mapsModal').off().on('shown.bs.modal', function() {
+    map = new google.maps.Map(document.getElementById('mapCanvas'), {
+        zoom: 13,
+        center: new google.maps.LatLng($('.restoAddress').attr('data-lat'), $('.restoAddress').attr('data-long')),
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        disableDefaultUI: true,
+        zoomControl: true
+    });
+
+    var image = '../../public/img/resto_marker.png';
+    var infowindow = new google.maps.InfoWindow();
+
+    var marker = new google.maps.Marker({
+        position: {lat: parseFloat($('.restoAddress').attr('data-lat')), lng: parseFloat($('.restoAddress').attr('data-long'))},
+        map: map,
+        title: restoName,
+        icon: image
+    });
+
+    google.maps.event.addListener(marker, 'click', (function (marker) {
+        return function () {
+            infowindow.setContent('<a href="https://www.google.com/maps?daddr='+parseFloat($('.restoAddress').attr('data-lat'))+','+parseFloat($('.restoAddress').attr('data-long'))+'&saddr" target="_blank">Routebeschrijving naar '+restoName+'</a>');
+            infowindow.open(map, marker);
+        }
+    })(marker));
+
+    google.maps.event.trigger(map, "resize");
+});
