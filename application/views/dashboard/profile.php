@@ -25,34 +25,34 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 row-grid">
             <a href="#" class="btn btn-primary form-control" data-toggle="modal" data-target="#editContactModal" data-backdrop="static" title="Bewerk contactgegevens">
                 <span class="fa fa-edit fa-fw" data-toggle="tooltip" data-placement="top" title="" data-original-title="Actie bewerken"></span>
-                Bewerk contactgegevens</a>
+                Contact</a>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 row-grid">
             <a href="#" class="btn btn-primary form-control" data-toggle="modal" data-target="#editCoverModal" data-backdrop="static" title="Bewerk coverfoto">
                 <span class="fa fa-edit fa-fw" data-toggle="tooltip" data-placement="top" title="" data-original-title="Actie bewerken"></span>
-                Bewerk coverfoto</a>
+                Cover</a>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 row-grid">
             <a href="#" class="btn btn-primary form-control" data-toggle="modal" data-target="#editOpeningHoursModal" data-backdrop="static" title="Bewerk openingsuren">
                 <span class="fa fa-edit fa-fw" data-toggle="tooltip" data-placement="top" title="" data-original-title="Actie bewerken"></span>
-                Bewerk openingsuren</a>
+                Openingsuren</a>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <a href="#" class="btn btn-primary form-control" data-toggle="modal" data-target="#editSocialModal" data-backdrop="static" title="Bewerk social media">
                 <span class="fa fa-edit fa-fw" data-toggle="tooltip" data-placement="top" title="" data-original-title="Actie bewerken"></span>
-                Bewerk social media</a>
+                Social media</a>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <a href="#" class="btn btn-primary form-control" data-toggle="modal" data-target="#editRestoPhotosModal" data-backdrop="static" title="Bewerk sfeerfoto's">
                 <span class="fa fa-edit fa-fw" data-toggle="tooltip" data-placement="top" title="" data-original-title="Actie bewerken"></span>
-                Bewerk sfeerfoto's</a>
+                Foto's</a>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <a href="#" class="btn btn-primary form-control" data-toggle="modal" data-target="#editPaymentsModal" data-backdrop="static" title="Bewerk betaalmogelijkheden">
                 <span class="fa fa-edit fa-fw" data-toggle="tooltip" data-placement="top" title="" data-original-title="Actie bewerken"></span>
-                Bewerk betaalmogelijkheden</a>
+                Betalen</a>
         </div>
     </div>
     <div class="row" id="loaderDiv" style="margin: 80px;">

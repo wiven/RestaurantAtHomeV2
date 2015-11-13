@@ -170,6 +170,7 @@
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <!-- Will be included in the controller as a parameter when needed on a page -->
 <!--<script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script>-->
+<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
 <script src="<?php echo public_url(); ?>js/jquery.ui.touch-punch.js"></script>
 <script src="<?php echo public_url(); ?>js/jquery.steps.min.js"></script>
 <script src="<?php echo public_url(); ?>js/base64.js"></script>

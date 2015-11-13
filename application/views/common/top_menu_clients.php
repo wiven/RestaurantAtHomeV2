@@ -8,7 +8,8 @@
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="modal" data-target=".login-modal" data-backdrop="static" aria-expanded="false">
+					<button href="/login" type="button" class="navbar-toggle collapsed" aria-expanded="false">
+<!--					<button href="/login" type="button" class="navbar-toggle collapsed" data-toggle="modal" data-target=".login-modal" data-backdrop="static" aria-expanded="false">-->
 						<span class="sr-only">Menu</span>
 						<i class="fa fa-user fa-2x"></i>
 					</button>

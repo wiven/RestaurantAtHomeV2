@@ -10,6 +10,8 @@ var addressArray = Array();
 var weekDayNames = Array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
 var weekDayNamesNL = Array('maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag', 'zondag');
 var contactInfoFormOK = false, SocialFormOK = false;
+var realOH = Array('', '', '', '', '', '', '');
+var temp = '';
 
 // When the document is ready
 $(document).ready(function () {
@@ -951,7 +953,7 @@ function getInitialRestoInfo(restoId) {
                 return;
             }
 
-            console.log(response);
+            //console.log(response);
 
             restoName = response.restaurantInfo.name;
 
@@ -984,25 +986,55 @@ function getInitialRestoInfo(restoId) {
 
             // RIGHT COLUMN
             var openingHoursContent = '';
-            var daysOfWeek = Array('Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo');
+            var daysOfWeek = Array('Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo');
             var openingHoursFromDB = Array();
             var d = new Date();
             var n = d.getDay();
 
             $.each(response.openingHours, function(index,item) {
-                var opening = response.openingHours[index];
-                var day = opening.dayOfWeek;
+                if(realOH[item.dayOfWeek].length != 0) {
+                    realOH[item.dayOfWeek] += ' & '+item.fromTime.substr(0, item.fromTime.length-3)+' - '+item.toTime.substr(0, item.toTime.length-3);
+                } else {
+                    realOH.splice(item.dayOfWeek, 0, item.fromTime.substr(0, item.fromTime.length-3)+' - '+item.toTime.substr(0, item.toTime.length-3));
+                }
 
-                if(opening.open == "0") {
+                //console.log(item);
+                /*var day = item.dayOfWeek;
+
+                if(item.open == "0") {
                     openingHoursFromDB[day] = daysOfWeek[day]+': Gesloten';
                 } else {
-                    var from = opening.fromTime.substr(0, opening.fromTime.length-3);
-                    var to = opening.toTime.substr(0, opening.toTime.length-3);
+                    var from = item.fromTime.substr(0, item.fromTime.length-3);
+                    var to = item.toTime.substr(0, item.toTime.length-3);
                     openingHoursFromDB[day] = daysOfWeek[day]+': '+from+' - '+to;
+                }*/
+            });
+
+            $.each(realOH, function(index,item) {
+                if(item.length != 0) {
+                    if(item.substr(0,1) == "0") {
+                        if(index == 0) { temp = daysOfWeek[index]+': Gesloten'; }
+                        if(index == (n)) {
+                            if(index != 0) { openingHoursContent+='<strong>Gesloten</strong>'; }
+                        } else {
+                            if(index != 0) { openingHoursContent+=daysOfWeek[index]+': Gesloten'; }
+                        }
+                    } else {
+                        if(index == 0) {
+                            temp = daysOfWeek[index]+': '+item;
+                        }
+                        if(index == (n)) {
+                            if(index != 0) { openingHoursContent+='<strong>'+daysOfWeek[index]+': '+item+'</strong>'; }
+                        } else {
+                            if(index != 0) { openingHoursContent+=daysOfWeek[index]+': '+item; }
+                        }
+                    }
+
+                    if(index != 0) { openingHoursContent+='<br />'; }
                 }
             });
 
-            $.each(openingHoursFromDB, function(index,item) {
+            /*$.each(openingHoursFromDB, function(index,item) {
                 if(typeof(openingHoursFromDB[index]) != "undefined") {
                     if(index == (n-1)) {
                         openingHoursContent+='<strong>'+openingHoursFromDB[index]+'</strong>';
@@ -1011,7 +1043,7 @@ function getInitialRestoInfo(restoId) {
                     }
                     openingHoursContent+='<br />';
                 }
-            });
+            });*/
 
             // resetting the payment methods
             $('.PaymentCash').addClass('hidden');
@@ -1026,7 +1058,7 @@ function getInitialRestoInfo(restoId) {
 
                 //console.log(response.paymentMethods[index].id);
 
-                switch(response.paymentMethods[index].id) {
+                switch(item.id) {
                     case "1":
                         $('.PaymentCash').removeClass('hidden');
                         break;
@@ -1049,7 +1081,7 @@ function getInitialRestoInfo(restoId) {
                 }
             });
 
-            $('#RestoOpeningHours').html(openingHoursContent);
+            $('#RestoOpeningHours').html(openingHoursContent+temp);
 
             // setting the 'edit contact modal' values
             /*$('input[name="restoAddress"]').val(response.addressInfo.street+' '+response.addressInfo.number+', '+response.addressInfo.postcode+' '+response.addressInfo.city);
@@ -1571,15 +1603,19 @@ function getOpeningHours() {
     $.ajax(settings).always(function (response) {
         response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
 
-        $.each(response.openingHours, function(index,item) {
-            var fromShow = response.openingHours[index].fromTime.substr(0,5);
-            var toShow = response.openingHours[index].toTime.substr(0,5);
+        console.log(response.openingHours);
 
-            if(response.openingHours[index].open === '1') {
-                $('#hours'+weekDayNames[index]).val(fromShow+'-'+toShow);
+        $.each(response.openingHours, function(index,item) {
+            var fromShow = item.fromTime.substr(0,5);
+            var toShow = item.toTime.substr(0,5);
+
+            console.log(parseInt(item.dayOfWeek)+1);
+
+            if(item.open === '1') {
+                $('#hours'+weekDayNames[parseInt(item.dayOfWeek)+1]).val(fromShow+'-'+toShow);
             }
 
-            $('#hours'+weekDayNames[index]).attr('data-id', response.openingHours[index].id);
+            $('#hours'+weekDayNames[item.dayOfWeek+1]).attr('data-id', item.id);
         });
     });
 }
