@@ -170,7 +170,7 @@
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <!-- Will be included in the controller as a parameter when needed on a page -->
 <!--<script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script>-->
-<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+<script src="http://maps.google.com/maps/api/js" type="text/javascript"></script>
 <script src="<?php echo public_url(); ?>js/jquery.ui.touch-punch.js"></script>
 <script src="<?php echo public_url(); ?>js/jquery.steps.min.js"></script>
 <script src="<?php echo public_url(); ?>js/base64.js"></script>
@@ -193,7 +193,7 @@
 	var distance_to_destination = '';
 
 	$(document).ready(function () {
-		if (navigator.geolocation) {
+		/*if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function (position) {
 				pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
@@ -209,7 +209,7 @@
 		} else {
 			// Browser doesn't support Geolocation
 			handleNoGeolocation(false);
-		}
+		}*/
 
 
 		$('#contact_type_btns a').on('click', function (e) {
@@ -461,7 +461,7 @@
 		return distance_to_destination + ', ' + time_to_destination + ' rijden)';
 	}
 
-	function handleNoGeolocation(errorFlag) {
+	/*function handleNoGeolocation(errorFlag) {
 		if (errorFlag) {
 			var content = 'Error: The Geolocation service failed.';
 		} else {
@@ -478,7 +478,7 @@
 
 		var infowindow = new google.maps.InfoWindow(options);
 		map.setCenter(options.position);
-	}
+	}*/
 
 	function calculateDistances(start, finish) {
 		var service = new google.maps.DistanceMatrixService();

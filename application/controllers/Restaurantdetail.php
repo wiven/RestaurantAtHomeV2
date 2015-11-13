@@ -13,7 +13,14 @@ class Restaurantdetail extends CI_Controller {
 	public function index() {
 		$data_header = array(
 			'page_title' => ' - Restaurant',
-			'additional_styles' => ""
+			'additional_styles' => "
+<style>
+	/* TEMPORARY FIX, SORRY FRE */
+	article img {
+		height: 125px;
+		object-fit: cover;
+	}
+</style>"
 		);
 
 		$data_footer = array(
