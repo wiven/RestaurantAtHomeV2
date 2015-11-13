@@ -227,7 +227,8 @@ $('#registerForm').formValidation({
                                              $('body').css('opacity', 1);
                                              if($('input[name="optionsUserType"]:checked').val() == 'Client') {
                                                  swal({
-                                                     title: "<i class='fa fa-check'></i><br />Proficiat!",
+                                                     title: "Proficiat!",
+                                                     type: "success",
                                                      text: "Uw account werd succesvol aangemaakt.<br />U kan zich <a href='/login'>hier</a> aanmelden.",
                                                      html: true
                                                  });
