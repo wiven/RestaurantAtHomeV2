@@ -158,7 +158,10 @@ $('#registerForm').formValidation({
              // creating new user
              $.ajax(settings).always(function (response) {
                  response = JSON.parse(response.responseText.substr(1, response.responseText.length-2));
-                 if(response.message.indexOf('exists') != -1) { swal("Oeps...", "Er bestaat al een gebruiker met dit e-mailadres", "error"); }
+
+                 try {
+                     if(response.message.indexOf('exists') != -1) { swal("Oeps...", "Er bestaat al een gebruiker met dit e-mailadres", "error"); }
+                 } catch(err) { }
 
                  try {
                      if(response.hash.length !== 0) {
